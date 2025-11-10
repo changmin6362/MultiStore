@@ -10,6 +10,7 @@ interface MyButtonProps {
 
 export const MyButton = ({
   label,
+  onClick,
   buttonType = "primary",
   state = "cancel",
   ...props
@@ -49,6 +50,7 @@ export const MyButton = ({
             : "border-purple-500 text-purple-500 bg-transparent")
         } `}
       {...props}
+      onClick={onClick}
     >
       <span className="relative w-fit text-center whitespace-nowrap">
         {label}
