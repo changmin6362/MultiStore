@@ -8,7 +8,7 @@ interface MyButtonProps {
   state?: State;
 }
 
-export const MyButton = ({
+export const Button = ({
   label,
   onClick,
   buttonType = "primary",
