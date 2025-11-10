@@ -1,53 +1,58 @@
+type ButtonType = "primary" | "secondary";
+type State = "cancel" | "submit" | "negative" | "positive" | "navigation";
+
 interface MyButtonProps {
   label: string;
-  primary?: boolean;
   onClick?: () => void;
+  buttonType?: ButtonType;
+  state?: State;
 }
 
 export const MyButton = ({
   label,
-  primary = false,
+  buttonType = "primary",
+  state = "cancel",
   ...props
 }: MyButtonProps) => {
-  const mode = primary ? "bg-blue-500 text-white" : "bg-gray-200 text-black";
+  const isPrimary = buttonType === "primary";
+
   return (
     <button
       type="submit"
-      className={`pt-var(--size-space-150) relative flex cursor-pointer flex-col
-        items-center gap-(--size-space-0) overflow-hidden rounded-[5px] border
-        border-solid border-[#0088ff] bg-[#0088ff] px-6 pb-(--size-space-150)
-        transition-colors hover:bg-[#0077ee] focus:ring-2 focus:ring-[#0088ff]
-        focus:ring-offset-2 focus:outline-none active:bg-[#0066dd] ${mode}`}
+      className={` /* 기본 스타일 */ relative flex w-full cursor-pointer flex-col
+        items-center justify-center overflow-hidden rounded-[5px] border
+        border-solid px-1.5 py-1.5 transition-opacity hover:opacity-90
+        active:opacity-80 /* 상태별 색상 로직 */ ${
+          state === "cancel" &&
+          (isPrimary
+            ? "bg-gray-400 text-white border-gray-400"
+            : "border-gray-400 text-gray-400 bg-transparent")
+        } ${
+          state === "submit" &&
+          (isPrimary
+            ? "bg-blue-500 text-white border-blue-500"
+            : "border-blue-500 text-blue-500 bg-transparent")
+        } ${
+          state === "negative" &&
+          (isPrimary
+            ? "bg-yellow-500 text-black border-yellow-500"
+            : "border-yellow-500 text-yellow-500 bg-transparent")
+        } ${
+          state === "positive" &&
+          (isPrimary
+            ? "bg-green-500 text-black border-green-500"
+            : "border-green-500 text-green-500 bg-transparent")
+        } ${
+          state === "navigation" &&
+          (isPrimary
+            ? "bg-purple-500 text-white border-purple-500"
+            : "border-purple-500 text-purple-500 bg-transparent")
+        } `}
       {...props}
     >
-      <span
-        className="font-m3-body-small-emphasized
-          text-colors-miscellaneous-text-field-BG relative mt-px w-fit
-          text-center leading-(--m3-body-small-emphasized-line-height)
-          font-(--m3-body-small-emphasized-font-weight)
-          tracking-(--m3-body-small-emphasized-letter-spacing) whitespace-nowrap
-          text-(--m3-body-small-emphasized-font-size)
-          [font-style:var(--m3-body-small-emphasized-font-style)]"
-      >
+      <span className="relative w-fit text-center whitespace-nowrap">
         {label}
       </span>
-      <div className="p-8">
-        {/* 기본 폰트 (Noto Sans KR + Inter) */}
-        <h1 className="font-sans text-4xl font-bold">안녕하세요 Hello World</h1>
-
-        {/* Inter만 사용 */}
-        <p className="font-inter text-lg">This text uses Inter font</p>
-
-        {/* Noto Sans KR만 사용 */}
-        <p className="font-noto text-lg">
-          이 텍스트는 Noto Sans KR 폰트를 사용합니다
-        </p>
-
-        {/* 코드 블록 */}
-        <code className="rounded bg-gray-100 px-2 py-1 font-mono">
-          const hello = `world`;
-        </code>
-      </div>
     </button>
   );
 };

@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/react";
-
 import { MyButton } from "./Button";
 
 const meta = {
@@ -7,25 +6,27 @@ const meta = {
   component: MyButton,
   tags: ["autodocs"],
   argTypes: {
-    primary: { control: "boolean" },
     label: { control: "text" },
-  },
+    // Controls 패널에 드롭다운 메뉴 추가
+    buttonType: {
+      control: "select",
+      options: ["primary", "secondary"]
+    },
+    state: {
+      control: "select",
+      options: ["cancel", "submit", "negative", "positive", "navigation"]
+    }
+  }
 } satisfies Meta<typeof MyButton>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// 기본 버튼 스토리
-export const Primary: Story = {
+// 버튼 테스트
+export const PrimaryBlue: Story = {
   args: {
-    primary: true,
-    label: "Primary Button",
-  },
-};
-
-// 보조 버튼 스토리 (다른 상태)
-export const Secondary: Story = {
-  args: {
-    label: "Secondary Button",
-  },
+    label: "Primary Blue Button",
+    buttonType: "primary",
+    state: "cancel"
+  }
 };
