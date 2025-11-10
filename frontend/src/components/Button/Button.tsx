@@ -1,7 +1,7 @@
 type ButtonType = "primary" | "secondary";
 type State = "cancel" | "submit" | "negative" | "positive" | "navigation";
 
-interface MyButtonProps {
+interface ButtonProps {
   label: string;
   onClick?: () => void;
   buttonType?: ButtonType;
@@ -14,7 +14,7 @@ export const Button = ({
   buttonType = "primary",
   state = "cancel",
   ...props
-}: MyButtonProps) => {
+}: ButtonProps) => {
   const isPrimary = buttonType === "primary";
 
   return (
