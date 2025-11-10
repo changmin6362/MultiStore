@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Button } from "./Button";
+import { Button, Buttons, States } from "./Button";
 
 const meta = {
   title: "MainComponents/Button",
@@ -10,11 +10,11 @@ const meta = {
     // Controls 패널에 드롭다운 메뉴 추가
     buttonType: {
       control: "select",
-      options: ["primary", "secondary"]
+      options: Buttons
     },
     state: {
       control: "select",
-      options: ["cancel", "submit", "negative", "positive", "navigation"]
+      options: States
     }
   }
 } satisfies Meta<typeof Button>;
@@ -25,8 +25,8 @@ type Story = StoryObj<typeof meta>;
 // 버튼 테스트
 export const PrimaryBlue: Story = {
   args: {
-    label: "Primary Blue Button",
-    buttonType: "primary",
-    state: "cancel"
+    label: "로그인",
+    buttonType: Buttons[0],
+    state: States[0]
   }
 };
