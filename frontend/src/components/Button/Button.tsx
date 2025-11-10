@@ -13,10 +13,22 @@ export const MyButton = ({
   return (
     <button
       type="submit"
-      className={`pt-var(--size-space-150) relative flex cursor-pointer flex-col items-center gap-(--size-space-0) overflow-hidden rounded-[5px] border border-solid border-[#0088ff] bg-[#0088ff] px-6 pb-(--size-space-150) transition-colors hover:bg-[#0077ee] focus:ring-2 focus:ring-[#0088ff] focus:ring-offset-2 focus:outline-none active:bg-[#0066dd] ${mode}`}
+      className={`pt-var(--size-space-150) relative flex cursor-pointer flex-col
+        items-center gap-(--size-space-0) overflow-hidden rounded-[5px] border
+        border-solid border-[#0088ff] bg-[#0088ff] px-6 pb-(--size-space-150)
+        transition-colors hover:bg-[#0077ee] focus:ring-2 focus:ring-[#0088ff]
+        focus:ring-offset-2 focus:outline-none active:bg-[#0066dd] ${mode}`}
       {...props}
     >
-      <span className="font-m3-body-small-emphasized text-colors-miscellaneous-text-field-BG relative mt-px w-fit text-center leading-(--m3-body-small-emphasized-line-height) font-(--m3-body-small-emphasized-font-weight) tracking-(--m3-body-small-emphasized-letter-spacing) whitespace-nowrap text-(--m3-body-small-emphasized-font-size) [font-style:var(--m3-body-small-emphasized-font-style)]">
+      <span
+        className="font-m3-body-small-emphasized
+          text-colors-miscellaneous-text-field-BG relative mt-px w-fit
+          text-center leading-(--m3-body-small-emphasized-line-height)
+          font-(--m3-body-small-emphasized-font-weight)
+          tracking-(--m3-body-small-emphasized-letter-spacing) whitespace-nowrap
+          text-(--m3-body-small-emphasized-font-size)
+          [font-style:var(--m3-body-small-emphasized-font-style)]"
+      >
         {label}
       </span>
       <div className="p-8">
