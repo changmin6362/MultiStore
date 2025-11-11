@@ -15,7 +15,7 @@ type HeaderVariantType = (typeof HeaderVariants)[number];
 interface HeaderProps {
   breakpoint: BreakpointType;
   variant: HeaderVariantType;
-  label?: string;
+  title?: string;
   userState?: UserStateType;
 }
 

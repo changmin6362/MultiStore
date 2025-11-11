@@ -5,29 +5,29 @@ import { BreakpointType, UserStateType, Breakpoints } from "./type";
 
 interface HeaderProps extends HeaderContentProps {
   breakpoint?: BreakpointType;
-  label?: string;
+  title?: string;
 }
 
 export const HeaderPageNameAndLogin = ({
   breakpoint,
-  label,
+  title,
   userState
 }: HeaderProps) => {
   return breakpoint === Breakpoints[0] ? (
     <div
       className="flex flex-col border-b [border-bottom-style:solid] border-gray"
     >
-      <HeaderContent pageName={label} userState={userState} />
+      <HeaderContent pageName={title} userState={userState} />
     </div>
   ) : breakpoint === Breakpoints[1] ? (
     <div
       className="flex flex-col border-b [border-bottom-style:solid] border-gray"
     >
-      <HeaderContent pageName={label} userState={userState} />
+      <HeaderContent pageName={title} userState={userState} />
     </div>
   ) : (
     <div className="flex border-b [border-bottom-style:solid] border-gray">
-      <HeaderContent pageName={label} userState={userState}></HeaderContent>
+      <HeaderContent pageName={title} userState={userState}></HeaderContent>
     </div>
   );
 };

@@ -10,7 +10,7 @@ const meta = {
   argTypes: {
     breakpoint: { control: "select", options: Breakpoints },
     variant: { control: "select", options: HeaderVariants },
-    label: {
+    title: {
       control: "text"
     },
     userState: {
@@ -28,7 +28,7 @@ export const DefaultHeader: Story = {
   args: {
     breakpoint: Breakpoints[0],
     variant: HeaderVariants[0],
-    label: "",
+    title: "",
     userState: UserStates[0]
   }
 };

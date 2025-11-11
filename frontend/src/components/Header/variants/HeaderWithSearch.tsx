@@ -6,31 +6,31 @@ import { BreakpointType, UserStateType, Breakpoints } from "./type";
 
 interface HeaderProps extends HeaderContentProps {
   breakpoint?: BreakpointType;
-  label?: string;
+  title?: string;
 }
 
 export const HeaderWithSearch = ({
   breakpoint,
-  label,
+  title,
   userState
 }: HeaderProps) => {
   return breakpoint === Breakpoints[0] ? (
     <div
       className="flex flex-col border-b [border-bottom-style:solid] border-gray"
     >
-      <HeaderContent storeName={label} userState={userState} />
+      <HeaderContent storeName={title} userState={userState} />
       <SearchBar />
     </div>
   ) : breakpoint === Breakpoints[1] ? (
     <div
       className="flex flex-col border-b [border-bottom-style:solid] border-gray"
     >
-      <HeaderContent storeName={label} userState={userState} />
+      <HeaderContent storeName={title} userState={userState} />
       <SearchBar />
     </div>
   ) : (
     <div className="flex border-b [border-bottom-style:solid] border-gray">
-      <HeaderContent storeName={label} userState={userState}>
+      <HeaderContent storeName={title} userState={userState}>
         <SearchBar />
       </HeaderContent>
     </div>

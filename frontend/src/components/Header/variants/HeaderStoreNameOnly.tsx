@@ -4,25 +4,25 @@ import { BreakpointType, Breakpoints } from "./type";
 
 interface HeaderProps extends HeaderContentProps {
   breakpoint?: BreakpointType;
-  label?: string;
+  title?: string;
 }
 
-export const HeaderStoreNameOnly = ({ breakpoint, label }: HeaderProps) => {
+export const HeaderStoreNameOnly = ({ breakpoint, title }: HeaderProps) => {
   return breakpoint === Breakpoints[0] ? (
     <div
       className="flex flex-col border-b [border-bottom-style:solid] border-gray"
     >
-      <HeaderContent storeName={label} />
+      <HeaderContent storeName={title} />
     </div>
   ) : breakpoint === Breakpoints[1] ? (
     <div
       className="flex flex-col border-b [border-bottom-style:solid] border-gray"
     >
-      <HeaderContent storeName={label} />
+      <HeaderContent storeName={title} />
     </div>
   ) : (
     <div className="flex border-b [border-bottom-style:solid] border-gray">
-      <HeaderContent storeName={label} />
+      <HeaderContent storeName={title} />
     </div>
   );
 };
