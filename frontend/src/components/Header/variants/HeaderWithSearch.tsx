@@ -15,21 +15,17 @@ export const HeaderWithSearch = ({
   userState
 }: HeaderProps) => {
   return breakpoint === Breakpoints[0] ? (
-    <div
-      className="flex flex-col border-b [border-bottom-style:solid] border-gray"
-    >
+    <div className="flex flex-col border-b border-gray-400">
       <HeaderContent storeName={title} userState={userState} />
       <SearchBar />
     </div>
   ) : breakpoint === Breakpoints[1] ? (
-    <div
-      className="flex flex-col border-b [border-bottom-style:solid] border-gray"
-    >
+    <div className="flex flex-col border-b border-gray-400">
       <HeaderContent storeName={title} userState={userState} />
       <SearchBar />
     </div>
   ) : (
-    <div className="flex border-b [border-bottom-style:solid] border-gray">
+    <div className="flex border-b border-gray-400">
       <HeaderContent storeName={title} userState={userState}>
         <SearchBar />
       </HeaderContent>

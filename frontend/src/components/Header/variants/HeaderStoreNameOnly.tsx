@@ -9,19 +9,15 @@ interface HeaderProps extends HeaderContentProps {
 
 export const HeaderStoreNameOnly = ({ breakpoint, title }: HeaderProps) => {
   return breakpoint === Breakpoints[0] ? (
-    <div
-      className="flex flex-col border-b [border-bottom-style:solid] border-gray"
-    >
+    <div className="flex flex-col border-b border-gray-400">
       <HeaderContent storeName={title} />
     </div>
   ) : breakpoint === Breakpoints[1] ? (
-    <div
-      className="flex flex-col border-b [border-bottom-style:solid] border-gray"
-    >
+    <div className="flex flex-col border-b border-gray-400">
       <HeaderContent storeName={title} />
     </div>
   ) : (
-    <div className="flex border-b [border-bottom-style:solid] border-gray">
+    <div className="flex border-b border-gray-400">
       <HeaderContent storeName={title} />
     </div>
   );

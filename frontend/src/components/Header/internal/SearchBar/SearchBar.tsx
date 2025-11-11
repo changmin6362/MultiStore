@@ -27,7 +27,7 @@ export const SearchBar = () => {
         onSubmit={handleSearchSubmit}
         className="flex flex-col items-start justify-center gap-2.5 px-4
           relative self-stretch w-full flex-[0_0_auto] rounded-[10px]
-          overflow-auto border border-solid border-blue-500 shadow-2xs"
+          overflow-auto border border-blue-500 shadow-2xs"
         role="search"
         aria-label="Search"
       >

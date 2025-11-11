@@ -30,9 +30,9 @@ export const Button = ({
     <button
       type="submit"
       className={` /* 기본 스타일 */ relative flex w-full cursor-pointer flex-col
-        items-center justify-center overflow-hidden rounded-[5px] border
-        border-solid px-1.5 py-1.5 transition-opacity hover:opacity-90
-        active:opacity-80 /* 상태별 색상 로직 */ ${
+        items-center justify-center overflow-hidden rounded-[5px] border px-1.5
+        py-1.5 transition-opacity hover:opacity-90 active:opacity-80 /* 상태별 색상
+        로직 */ ${
           state === States[0] &&
           (isPrimary
             ? "bg-gray-400 text-white border-gray-400"
