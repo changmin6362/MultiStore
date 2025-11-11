@@ -1,5 +1,5 @@
 import { UserStateType, UserStates } from "../../variants/type";
-import { ImageContainer } from "@/components/ImageContainer/ImageContainer";
+import { ImageViewer } from "@/components/ImageViewer/ImageViewer";
 
 import Cart from "@public/cart.svg";
 
@@ -42,7 +42,7 @@ export const Navigation = ({ userState }: NavigationProps) => {
       ))}
 
       {isUser && (
-        <ImageContainer
+        <ImageViewer
           imageSrc={Cart}
           alt="장바구니"
           width={24}

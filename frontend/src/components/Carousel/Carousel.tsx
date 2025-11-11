@@ -7,13 +7,7 @@ export const Carousel = () => {
       className="flex flex-col items-center justify-center gap-2.5 px-8 relative
         min-h-[200px] overflow-hidden"
     >
-      <Image
-        src={background}
-        alt="carousel"
-        fill
-        className="absolute top-0 left-0 object-cover"
-        aria-hidden="true"
-      />
+      <Image src={background} alt="carousel" fill className="object-cover" />
 
       <div
         className="flex flex-col items-start justify-center relative

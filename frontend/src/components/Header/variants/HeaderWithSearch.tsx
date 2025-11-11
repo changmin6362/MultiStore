@@ -1,5 +1,5 @@
 import Logo from "@public/logo.svg";
-import { ImageContainer } from "@/components/ImageContainer/ImageContainer";
+import { ImageViewer } from "@/components/ImageViewer/ImageViewer";
 import { Navigation } from "../internal/Navigation/Navigation";
 import { SearchBar } from "../internal/SearchBar/SearchBar";
 import { BreakpointType, UserStateType, Breakpoints } from "./type";
@@ -53,7 +53,7 @@ const HeaderContent = ({
       className="flex flex-wrap w-full items-center justify-between gap-6 p-4
         bg-white"
     >
-      <ImageContainer imageSrc={Logo} alt={"logo.svg"} width={42} height={42} />
+      <ImageViewer imageSrc={Logo} alt={"logo.svg"} width={42} height={42} />
       <div className="inline-flex flex-col items-center relative">
         <h1 className="font-bold">
           {storeName === "" ? "MultiStore" : storeName}

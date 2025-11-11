@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ImageContainer } from "@/components/ImageContainer/ImageContainer";
+import { ImageViewer } from "@/components/ImageViewer/ImageViewer";
 import { useRouter } from "next/navigation";
 import Search from "@public/search.svg";
 
@@ -37,7 +37,7 @@ export const SearchBar = () => {
             aria-label="Search Submit"
             className="flex items-center"
           >
-            <ImageContainer
+            <ImageViewer
               imageSrc={Search}
               width={32}
               height={32}

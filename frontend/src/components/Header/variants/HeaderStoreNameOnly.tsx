@@ -1,5 +1,5 @@
 import Logo from "@public/logo.svg";
-import { ImageContainer } from "@/components/ImageContainer/ImageContainer";
+import { ImageViewer } from "@/components/ImageViewer/ImageViewer";
 import { BreakpointType, Breakpoints } from "./type";
 
 interface HeaderProps extends HeaderContentProps {
@@ -37,7 +37,7 @@ const HeaderContent = ({ storeName }: HeaderContentProps) => {
       className="flex flex-wrap w-full items-center justify-center gap-6 p-4
         bg-white"
     >
-      <ImageContainer imageSrc={Logo} alt={"logo.svg"} width={42} height={42} />
+      <ImageViewer imageSrc={Logo} alt={"logo.svg"} width={42} height={42} />
       <div className="inline-flex flex-col items-center relative">
         <h1 className="font-bold">
           {storeName === "" ? "MultiStore" : storeName}

@@ -1,5 +1,5 @@
 import Previous from "@public/previous.svg";
-import { ImageContainer } from "@/components/ImageContainer/ImageContainer";
+import { ImageViewer } from "@/components/ImageViewer/ImageViewer";
 import { Navigation } from "../internal/Navigation/Navigation";
 import { BreakpointType, UserStateType, Breakpoints } from "./type";
 
@@ -43,7 +43,7 @@ const HeaderContent = ({ pageName, userState }: HeaderContentProps) => {
       className="flex flex-wrap w-full items-center justify-between gap-6 p-4
         bg-white"
     >
-      <ImageContainer
+      <ImageViewer
         imageSrc={Previous}
         alt={"logo.svg"}
         width={42}
