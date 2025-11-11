@@ -7,6 +7,8 @@ import p4 from "@public/product4.png";
 import p5 from "@public/product5.png";
 import p6 from "@public/product6.png";
 
+const productImages = [p1, p2, p3, p4, p5, p6];
+
 export const CardGridContainer = () => {
   return (
     <div
@@ -18,15 +20,17 @@ export const CardGridContainer = () => {
           스토어 목록
         </p>
       </div>
-      <div className="flex gap-2.5 w-full items-start justify-between flex-1">
-        <CardGridItem imageSrc={p1} />
-        <CardGridItem imageSrc={p2} />
-        <CardGridItem imageSrc={p3} />
-      </div>
-      <div className="flex gap-2.5 w-full items-start justify-between flex-1">
-        <CardGridItem imageSrc={p4} />
-        <CardGridItem imageSrc={p5} />
-        <CardGridItem imageSrc={p6} />
+      <div
+        className="flex gap-2.5 w-full items-start justify-between flex-1
+          flex-wrap md:flex-nowrap"
+      >
+        {productImages.map((imageSrc, index) => (
+          <CardGridItem
+            key={index}
+            imageSrc={imageSrc}
+            className="flex-1/4 md:flex-1/6"
+          />
+        ))}
       </div>
     </div>
   );
