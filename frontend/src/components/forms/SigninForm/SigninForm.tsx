@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Input } from "../../ui/Input/Input";
 import { Button } from "@/components/ui/Button/Button";
-import { ImageViewer } from "@/components/ui/ImageViewer/ImageViewer";
-import check from "@public/check.svg";
+import { Checkbox } from "@/components/ui/Checkbox/Checkbox";
 
 // form 디자인용 div
 const Divider = () => {
@@ -52,11 +51,8 @@ export const SigninForm = ({
         </div>
         {/* 에러 메시지 표시 */}
         <p className="text-red-500 text-sm">{errorMessage}</p>
-
-        <div className="p-1 flex justify-start items-center gap-1">
-          <ImageViewer imageSrc={check} alt="check" width={12} height={12} />
-          <p className="text-xs">로그인 상태 유지</p>
-        </div>
+        {/* 체크박스 */}
+        <Checkbox label="로그인 상태 유지" />
       </div>
       {/* form의 submit 버튼 */}
       <Button
