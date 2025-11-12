@@ -2,33 +2,17 @@ import Logo from "@public/logo.svg";
 import { ImageViewer } from "@/components/ImageViewer/ImageViewer";
 import { Navigation } from "../internal/Navigation/Navigation";
 import { SearchBar } from "../internal/SearchBar/SearchBar";
-import { BreakpointType, UserStateType, Breakpoints } from "./type";
+import { UserStateType } from "./type";
 
 interface HeaderProps extends HeaderContentProps {
-  breakpoint?: BreakpointType;
   title?: string;
 }
 
-export const HeaderWithSearch = ({
-  breakpoint,
-  title,
-  userState
-}: HeaderProps) => {
-  return breakpoint === Breakpoints[0] ? (
+export const HeaderWithSearch = ({ title, userState }: HeaderProps) => {
+  return (
     <div className="flex flex-col border-b border-gray-400">
       <HeaderContent storeName={title} userState={userState} />
       <SearchBar />
-    </div>
-  ) : breakpoint === Breakpoints[1] ? (
-    <div className="flex flex-col border-b border-gray-400">
-      <HeaderContent storeName={title} userState={userState} />
-      <SearchBar />
-    </div>
-  ) : (
-    <div className="flex border-b border-gray-400">
-      <HeaderContent storeName={title} userState={userState}>
-        <SearchBar />
-      </HeaderContent>
     </div>
   );
 };

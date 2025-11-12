@@ -2,7 +2,7 @@ import { HeaderPageNameAndLogin } from "./variants/HeaderPageNameAndLogin";
 import { HeaderWithSearch } from "./variants/HeaderWithSearch";
 import { HeaderStoreNameOnly } from "./variants/HeaderStoreNameOnly";
 
-import { BreakpointType, UserStateType } from "./variants/type";
+import { UserStateType } from "./variants/type";
 
 export const HeaderVariants = [
   "pageNameAndLogin",
@@ -13,7 +13,6 @@ export const HeaderVariants = [
 type HeaderVariantType = (typeof HeaderVariants)[number];
 
 interface HeaderProps {
-  breakpoint: BreakpointType;
   variant: HeaderVariantType;
   title?: string;
   userState?: UserStateType;

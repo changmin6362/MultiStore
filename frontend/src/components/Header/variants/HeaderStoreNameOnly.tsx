@@ -1,23 +1,13 @@
 import Logo from "@public/logo.svg";
 import { ImageViewer } from "@/components/ImageViewer/ImageViewer";
-import { BreakpointType, Breakpoints } from "./type";
 
 interface HeaderProps extends HeaderContentProps {
-  breakpoint?: BreakpointType;
   title?: string;
 }
 
-export const HeaderStoreNameOnly = ({ breakpoint, title }: HeaderProps) => {
-  return breakpoint === Breakpoints[0] ? (
+export const HeaderStoreNameOnly = ({ title }: HeaderProps) => {
+  return (
     <div className="flex flex-col border-b border-gray-400">
-      <HeaderContent storeName={title} />
-    </div>
-  ) : breakpoint === Breakpoints[1] ? (
-    <div className="flex flex-col border-b border-gray-400">
-      <HeaderContent storeName={title} />
-    </div>
-  ) : (
-    <div className="flex border-b border-gray-400">
       <HeaderContent storeName={title} />
     </div>
   );

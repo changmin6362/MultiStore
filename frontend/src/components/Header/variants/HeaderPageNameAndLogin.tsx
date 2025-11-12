@@ -1,29 +1,16 @@
 import Previous from "@public/previous.svg";
 import { ImageViewer } from "@/components/ImageViewer/ImageViewer";
 import { Navigation } from "../internal/Navigation/Navigation";
-import { BreakpointType, UserStateType, Breakpoints } from "./type";
+import { UserStateType } from "./type";
 
 interface HeaderProps extends HeaderContentProps {
-  breakpoint?: BreakpointType;
   title?: string;
 }
 
-export const HeaderPageNameAndLogin = ({
-  breakpoint,
-  title,
-  userState
-}: HeaderProps) => {
-  return breakpoint === Breakpoints[0] ? (
+export const HeaderPageNameAndLogin = ({ title, userState }: HeaderProps) => {
+  return (
     <div className="flex flex-col border-b border-gray-400">
       <HeaderContent pageName={title} userState={userState} />
-    </div>
-  ) : breakpoint === Breakpoints[1] ? (
-    <div className="flex flex-col border-b border-gray-400">
-      <HeaderContent pageName={title} userState={userState} />
-    </div>
-  ) : (
-    <div className="flex border-b border-gray-400">
-      <HeaderContent pageName={title} userState={userState}></HeaderContent>
     </div>
   );
 };
