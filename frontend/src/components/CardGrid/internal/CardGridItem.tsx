@@ -11,7 +11,7 @@ export const CardGridItem = ({
   className = "flex-1"
 }: CardGridItemProps) => {
   return (
-    <div className={`flex flex-col w-full ${className}`}>
+    <div className={`flex flex-col w-full p-1 gap-1 ${className}`}>
       <div
         className="flex flex-col w-full aspect-square relative justify-center
           items-center"

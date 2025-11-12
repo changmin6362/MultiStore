@@ -1,5 +1,18 @@
-import { CardGridContainer } from "./internal/CardGridContainer";
+import { CardGridPrimary } from "./variants/CardGridPrimary";
+import { CardGridSecondary } from "./variants/CardGridSecondary";
 
-export const CardGrid = () => {
-  return <CardGridContainer />;
+export const GridVariants = ["Primary", "Secondary"];
+
+type GridVariantType = (typeof GridVariants)[number];
+
+interface CardGridProps {
+  variant?: GridVariantType;
+}
+
+export const CardGrid = ({ variant }: CardGridProps) => {
+  if (variant === "Secondary") {
+    return <CardGridSecondary />;
+  }
+
+  return <CardGridPrimary />;
 };

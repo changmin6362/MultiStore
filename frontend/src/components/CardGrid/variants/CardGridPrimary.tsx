@@ -1,4 +1,4 @@
-import { CardGridItem } from "./CardGridItem";
+import { CardGridItem } from "../internal/CardGridItem";
 
 import p1 from "@public/product1.png";
 import p2 from "@public/product2.png";
@@ -9,7 +9,7 @@ import p6 from "@public/product6.png";
 
 const productImages = [p1, p2, p3, p4, p5, p6];
 
-export const CardGridContainer = () => {
+export const CardGridPrimary = () => {
   return (
     <div
       className="border-b border-gray-400 bg-white flex flex-col gap-y-4
@@ -21,14 +21,14 @@ export const CardGridContainer = () => {
         </p>
       </div>
       <div
-        className="flex gap-2.5 w-full items-start justify-between flex-1
-          flex-wrap md:flex-nowrap"
+        className="flex w-full items-start justify-between flex-1 flex-wrap
+          md:flex-nowrap"
       >
         {productImages.map((imageSrc, index) => (
           <CardGridItem
             key={index}
             imageSrc={imageSrc}
-            className="flex-1/4 md:flex-1/6"
+            className="flex-1/3 md:flex-1/6"
           />
         ))}
       </div>
