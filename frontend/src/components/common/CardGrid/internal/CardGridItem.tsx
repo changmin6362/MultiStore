@@ -11,14 +11,11 @@ export const CardGridItem = ({
   className = "flex-1"
 }: CardGridItemProps) => {
   return (
-    <div className={`flex flex-col w-full p-1 gap-1 ${className}`}>
-      <div
-        className="flex flex-col w-full aspect-square relative justify-center
-          items-center"
-      >
+    <div className={`flex w-full flex-col gap-1 p-1 ${className}`}>
+      <div className="relative flex aspect-square w-full flex-col items-center justify-center">
         <Image src={imageSrc} alt="carousel" fill className="object-cover" />
       </div>
-      <p className="text-black font-semi-bold text-left text-[14px]">상품명</p>
+      <p className="font-semi-bold text-left text-[14px] text-black">상품명</p>
     </div>
   );
 };

@@ -3,20 +3,11 @@ import background from "@public/background.svg";
 
 export const Carousel = () => {
   return (
-    <section
-      className="flex flex-col items-center justify-center gap-2.5 px-8 relative
-        min-h-[200px] overflow-hidden"
-    >
+    <section className="relative flex min-h-[200px] flex-col items-center justify-center gap-2.5 overflow-hidden px-8">
       <Image src={background} alt="carousel" fill className="object-cover" />
 
-      <div
-        className="flex flex-col items-start justify-center relative
-          self-stretch"
-      >
-        <h1
-          className="relative [text-shadow:0px_4px_4px_#00000040] text-2xl
-            text-white font-extrabold"
-        >
+      <div className="relative flex flex-col items-start justify-center self-stretch">
+        <h1 className="relative text-2xl font-extrabold text-white [text-shadow:0px_4px_4px_#00000040]">
           올마켓에서
           <br />
           다양한 상품을 만나보세요

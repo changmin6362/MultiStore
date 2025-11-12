@@ -22,12 +22,9 @@ interface FooterProps {
 
 export const Footer = ({ merchantData }: FooterProps) => {
   return (
-    <div
-      className="w-full p-8 bg-white flex flex-col justify-center items-first
-        gap-16 whitespace-nowrap"
-    >
-      <div className="w-full flex justify-between items-center">
-        <p className="text-black text-2xl">
+    <div className="items-first flex w-full flex-col justify-center gap-16 bg-white p-8 whitespace-nowrap">
+      <div className="flex w-full items-center justify-between">
+        <p className="text-2xl text-black">
           {merchantData?.storeName || "All Market"}
         </p>
         <div className="flex gap-4">
@@ -52,11 +49,9 @@ export const Footer = ({ merchantData }: FooterProps) => {
           />
         </div>
       </div>
-      <div
-        className="flex flex-col md:flex-row justify-between items-start gap-2"
-      >
-        <div className="w-full md:w-1/2 flex flex-col gap-2">
-          <p className="text-black font-bold">
+      <div className="flex flex-col items-start justify-between gap-2 md:flex-row">
+        <div className="flex w-full flex-col gap-2 md:w-1/2">
+          <p className="font-bold text-black">
             {merchantData?.companyName || "회사명(주)"}
           </p>
           <p className="text-black">
@@ -69,7 +64,7 @@ export const Footer = ({ merchantData }: FooterProps) => {
             {merchantData?.phone || "전화 1588-1234"}
           </p>
         </div>
-        <div className="w-full md:w-1/2 flex flex-col gap-2">
+        <div className="flex w-full flex-col gap-2 md:w-1/2">
           <p className="text-black">
             {merchantData?.sellerRegistrationNumber ||
               "통신판매업 신고번호 2025-서울-0000호"}

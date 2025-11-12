@@ -21,17 +21,14 @@ export const SearchBar = () => {
   };
 
   return (
-    <div className="flex flex-col items-start justify-center p-4 relative
-      bg-white">
+    <div className="relative flex flex-col items-start justify-center bg-white p-4">
       <form
         onSubmit={handleSearchSubmit}
-        className="flex flex-col items-start justify-center gap-2.5 px-4
-          relative self-stretch w-full flex-[0_0_auto] rounded-[10px]
-          overflow-auto border border-blue-500 shadow-2xs"
+        className="relative flex w-full flex-[0_0_auto] flex-col items-start justify-center gap-2.5 self-stretch overflow-auto rounded-[10px] border border-blue-500 px-4 shadow-2xs"
         role="search"
         aria-label="Search"
       >
-        <div className="flex items-center w-full">
+        <div className="flex w-full items-center">
           <button
             type="submit"
             aria-label="Search Submit"
@@ -51,7 +48,7 @@ export const SearchBar = () => {
             type="search"
             value={searchValue}
             onChange={handleSearchChange}
-            className="flex-1 py-2 text-base outline-none bg-transparent mx-2"
+            className="mx-2 flex-1 bg-transparent py-2 text-base outline-none"
             aria-label="Search input"
           />
         </div>

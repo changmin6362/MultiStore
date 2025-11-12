@@ -9,14 +9,14 @@ export const Checkbox = ({ label, id, ...props }: CheckboxProps) => {
   const checkboxId = id || `checkbox-${label.replace(/\s/g, "-")}`;
 
   return (
-    <div className="p-1 w-full flex justify-start items-center gap-1">
+    <div className="flex w-full items-center justify-start gap-1 p-1">
       <input
         id={checkboxId}
         type="checkbox"
         className="form-checkbox h-3 w-3 cursor-pointer"
         {...props}
       />
-      <label htmlFor={checkboxId} className="text-xs cursor-pointer">
+      <label htmlFor={checkboxId} className="cursor-pointer text-xs">
         {label}
       </label>
     </div>

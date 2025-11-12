@@ -27,44 +27,43 @@ export const Button = ({
       type="submit"
       disabled={disabled}
       // 공통적으로 적용될 버튼의 기본 스타일
-      className={` flex w-full flex-col items-center justify-center
-        rounded-[5px] border px-1.5 py-1.5 ${
-          disabled
-            ? // disabled가 true일 때 적용된 스타일
-              "bg-gray-400 text-white border-gray-400 cursor-not-allowed"
-            : // disabled가 false일 때 적용될 스타일
-              `cursor-pointer transition-opacity hover:opacity-90
-                active:opacity-80`
-        } ${ // disabled가 아닐 때 state에 따라 적용될 스타일
+      className={`flex w-full flex-col items-center justify-center rounded-[5px] border px-1.5 py-1.5 ${
+        disabled
+          ? // disabled가 true일 때 적용된 스타일
+            "cursor-not-allowed border-gray-400 bg-gray-400 text-white"
+          : // disabled가 false일 때 적용될 스타일
+            `cursor-pointer transition-opacity hover:opacity-90 active:opacity-80`
+      } ${
+        // disabled가 아닐 때 state에 따라 적용될 스타일
 
-          !disabled &&
-          state === States[0] && // Submit
-          (isPrimary
-            ? "bg-blue-500 text-white border-blue-500"
-            : "border-blue-500 text-blue-500 bg-transparent")
-        } ${
-          !disabled &&
-          state === States[1] && // Negative
-          (isPrimary
-            ? "bg-yellow-500 text-black border-yellow-500"
-            : "border-yellow-500 text-yellow-500 bg-transparent")
-        } ${
-          !disabled &&
-          state === States[2] && // Positive
-          (isPrimary
-            ? "bg-green-500 text-black border-green-500"
-            : "border-green-500 text-green-500 bg-transparent")
-        } ${
-          !disabled &&
-          state === States[3] && // Navigatoin
-          (isPrimary
-            ? "bg-purple-500 text-white border-purple-500"
-            : "border-purple-500 text-purple-500 bg-transparent")
-        } `}
+        !disabled &&
+        state === States[0] && // Submit
+        (isPrimary
+          ? "border-blue-500 bg-blue-500 text-white"
+          : "border-blue-500 bg-transparent text-blue-500")
+      } ${
+        !disabled &&
+        state === States[1] && // Negative
+        (isPrimary
+          ? "border-yellow-500 bg-yellow-500 text-black"
+          : "border-yellow-500 bg-transparent text-yellow-500")
+      } ${
+        !disabled &&
+        state === States[2] && // Positive
+        (isPrimary
+          ? "border-green-500 bg-green-500 text-black"
+          : "border-green-500 bg-transparent text-green-500")
+      } ${
+        !disabled &&
+        state === States[3] && // Navigatoin
+        (isPrimary
+          ? "border-purple-500 bg-purple-500 text-white"
+          : "border-purple-500 bg-transparent text-purple-500")
+      } `}
       {...props}
       onClick={onClick}
     >
-      <span className="relative text-center whitespace-nowrap font-bold">
+      <span className="relative text-center font-bold whitespace-nowrap">
         {label}
       </span>
     </button>

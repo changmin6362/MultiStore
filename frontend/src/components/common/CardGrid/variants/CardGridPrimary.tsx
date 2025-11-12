@@ -11,19 +11,13 @@ const productImages = [p1, p2, p3, p4, p5, p6];
 
 export const CardGridPrimary = () => {
   return (
-    <div
-      className="border-b border-gray-400 bg-white flex flex-col gap-y-4
-        items-center justify-center flex-1 px-4 py-8"
-    >
+    <div className="flex flex-1 flex-col items-center justify-center gap-y-4 border-b border-gray-400 bg-white px-4 py-8">
       <div className="w-full">
-        <p className="text-blue-500 font-semi-bold text-left text-2xl">
+        <p className="font-semi-bold text-left text-2xl text-blue-500">
           스토어 목록
         </p>
       </div>
-      <div
-        className="flex w-full items-start justify-between flex-1 flex-wrap
-          md:flex-nowrap"
-      >
+      <div className="flex w-full flex-1 flex-wrap items-start justify-between md:flex-nowrap">
         {productImages.map((imageSrc, index) => (
           <CardGridItem
             key={index}

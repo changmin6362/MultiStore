@@ -22,20 +22,16 @@ export const Navigation = ({ userState }: NavigationProps) => {
 
   return (
     <nav
-      className="flex items-center justify-end gap-2 relative flex-1"
+      className="relative flex flex-1 items-center justify-end gap-2"
       aria-label="Main navigation"
     >
       {navigationItems.map((item) => (
         <a
           key={item.id}
           href={item.href}
-          className="inline-flex items-center justify-center p-2 relative
-            flex-[0_0_auto] rounded-lg cursor-pointer"
+          className="relative inline-flex flex-[0_0_auto] cursor-pointer items-center justify-center rounded-lg p-2"
         >
-          <span
-            className="flex items-center justify-center whitespace-nowrap
-              relative"
-          >
+          <span className="relative flex items-center justify-center whitespace-nowrap">
             {item.label}
           </span>
         </a>
