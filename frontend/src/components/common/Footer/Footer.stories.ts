@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Footer, StoreDataType } from "./Footer";
 const meta: Meta<typeof Footer> = {
-  title: "MainComponents/Footer",
+  title: "Common/Footer",
   component: Footer,
   tags: ["autodocs"],
   argTypes: {
@@ -24,12 +24,12 @@ const mockData: StoreDataType = {
 
 export const DefaultFooter: StoryObj<typeof Footer> = {
   args: {
-    merchantData: mockData
+    merchantData: undefined
   }
 };
 
-export const EmptyFooter: StoryObj<typeof Footer> = {
+export const FilledFooter: StoryObj<typeof Footer> = {
   args: {
-    merchantData: undefined
+    merchantData: mockData
   }
 };

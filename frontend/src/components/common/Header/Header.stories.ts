@@ -4,7 +4,7 @@ import { Header, HeaderVariants } from "./Header";
 import { UserStates } from "./variants/type";
 
 const meta = {
-  title: "MainComponents/Header",
+  title: "Common/Header",
   component: Header,
   tags: ["autodocs"],
   argTypes: {
@@ -22,7 +22,6 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// 헤더 테스트
 export const DefaultHeader: Story = {
   args: {
     variant: HeaderVariants[0],
