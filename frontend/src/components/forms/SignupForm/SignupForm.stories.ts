@@ -1,23 +1,23 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { SigninForm } from "./SigninForm";
+import { SignupForm } from "./SignupForm";
 
 const meta = {
-  title: "Forms/SigninForm",
-  component: SigninForm,
+  title: "Forms/SignupForm",
+  component: SignupForm,
   tags: ["autodocs"],
   argTypes: {
-    onSignin: { action: "onSignin triggered" },
+    onSignup: { action: "onSignup triggered" },
     errorMessage: { control: "text" }
   }
-} satisfies Meta<typeof SigninForm>;
+} satisfies Meta<typeof SignupForm>;
 
 export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const DefaultSigninForm: Story = {
+export const DefaultSignupForm: Story = {
   args: {
-    onSignin: () => {},
+    onSignup: () => {},
     errorMessage: ""
   }
 };
