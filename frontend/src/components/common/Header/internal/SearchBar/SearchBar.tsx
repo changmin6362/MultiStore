@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ImageViewer } from "@/components/ImageViewer/ImageViewer";
+import { ImageViewer } from "@/components/ui/ImageViewer/ImageViewer";
 import { useRouter } from "next/navigation";
 import Search from "@public/search.svg";
 

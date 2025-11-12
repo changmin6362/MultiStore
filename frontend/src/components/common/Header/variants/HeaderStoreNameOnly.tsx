@@ -1,5 +1,5 @@
 import Logo from "@public/logo.svg";
-import { ImageViewer } from "@/components/ImageViewer/ImageViewer";
+import { ImageViewer } from "@/components/ui/ImageViewer/ImageViewer";
 
 interface HeaderProps extends HeaderContentProps {
   title?: string;

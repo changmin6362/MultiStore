@@ -1,5 +1,5 @@
 import { UserStateType, UserStates } from "../../variants/type";
-import { ImageViewer } from "@/components/ImageViewer/ImageViewer";
+import { ImageViewer } from "@/components/ui/ImageViewer/ImageViewer";
 
 import Cart from "@public/cart.svg";
 

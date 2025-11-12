@@ -1,42 +1,46 @@
-import Previous from "@public/previous.svg";
-import { ImageViewer } from "@/components/ImageViewer/ImageViewer";
+import Logo from "@public/logo.svg";
+import { ImageViewer } from "@/components/ui/ImageViewer/ImageViewer";
 import { Navigation } from "../internal/Navigation/Navigation";
+import { SearchBar } from "../internal/SearchBar/SearchBar";
 import { UserStateType } from "./type";
 
 interface HeaderProps extends HeaderContentProps {
   title?: string;
 }
 
-export const HeaderPageNameAndLogin = ({ title, userState }: HeaderProps) => {
+export const HeaderWithSearch = ({ title, userState }: HeaderProps) => {
   return (
     <div className="flex flex-col border-b border-gray-400">
-      <HeaderContent pageName={title} userState={userState} />
+      <HeaderContent storeName={title} userState={userState} />
+      <SearchBar />
     </div>
   );
 };
 
 interface HeaderContentProps {
-  pageName?: string;
+  storeName?: string;
   userState?: UserStateType;
+  children?: React.ReactElement;
 }
 
-const HeaderContent = ({ pageName, userState }: HeaderContentProps) => {
+const HeaderContent = ({
+  storeName,
+  userState,
+  children
+}: HeaderContentProps) => {
   return (
     <header
       className="flex flex-wrap w-full items-center justify-between gap-6 p-4
         bg-white"
     >
-      <ImageViewer
-        imageSrc={Previous}
-        alt={"logo.svg"}
-        width={42}
-        height={42}
-      />
+      <ImageViewer imageSrc={Logo} alt={"logo.svg"} width={42} height={42} />
       <div className="inline-flex flex-col items-center relative">
         <h1 className="font-bold">
-          {pageName === "" ? "MultiStore" : pageName}
+          {storeName === "" ? "MultiStore" : storeName}
         </h1>
       </div>
+
+      {children && children}
 
       <Navigation userState={userState} />
     </header>

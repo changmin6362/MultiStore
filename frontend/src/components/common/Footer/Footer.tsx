@@ -1,4 +1,4 @@
-import { ImageViewer } from "../ImageViewer/ImageViewer";
+import { ImageViewer } from "../../ui/ImageViewer/ImageViewer";
 
 import x from "@public/logo_x.svg";
 import instagram from "@public/logo_instagram.svg";
