@@ -66,7 +66,7 @@ export const SignupForm = ({
       </div>
       {/* form의 submit 버튼 */}
       <Button
-        label="로그인"
+        label="회원가입"
         onClick={handleLoginClick}
         disabled={isFormInvalid}
         state="Submit"
