@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Input } from "../../ui/Input/Input";
+import { Input } from "@/components/ui/Input/Input";
 import { Button } from "@/components/ui/Button/Button";
 
 // form 디자인용 div

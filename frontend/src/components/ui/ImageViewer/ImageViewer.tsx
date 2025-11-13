@@ -1,7 +1,9 @@
 import Link from "next/link";
 import Image, { StaticImageData } from "next/image";
 
-type ObjectFit = "object-contain" | "object-cover";
+export const ObjectClasses = ["object-contain", "object-cover"] as const;
+
+type ObjectFit = (typeof ObjectClasses)[number];
 
 interface ImageViewerProps {
   imageSrc: string | StaticImageData;
@@ -32,7 +34,7 @@ export const ImageViewer = ({
   onClick,
   width,
   height,
-  objectFit = "object-contain"
+  objectFit = ObjectClasses[0] // "object-contain"
 }: ImageViewerProps) => {
   const containerStyle = {
     width: `${width}px`,

@@ -1,10 +1,13 @@
-interface InputProps {
+import { InputHTMLAttributes } from "react";
+
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   placeholder: string;
   hasBorder?: boolean; // border 유무 선택
 }
 
 export const Input = ({
   placeholder,
+  type = "text",
   hasBorder = true,
   ...props
 }: InputProps) => {
@@ -18,7 +21,7 @@ export const Input = ({
       } px-4 py-1.5`}
     >
       <input
-        type={"text"}
+        type={type}
         placeholder={placeholder}
         className="flex-1 bg-transparent text-sm font-normal text-black outline-none"
         {...props}
