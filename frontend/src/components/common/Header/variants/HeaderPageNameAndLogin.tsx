@@ -1,0 +1,41 @@
+import Previous from "@public/previous.svg";
+import { ImageViewer } from "@/components/ui/ImageViewer/ImageViewer";
+import { Navigation } from "../internal/Navigation/Navigation";
+import { UserStateType } from "./type";
+
+interface HeaderProps extends HeaderContentProps {
+  title?: string;
+}
+
+export const HeaderPageNameAndLogin = ({ title, userState }: HeaderProps) => {
+  return (
+    <div className="flex flex-col border-b border-gray-400">
+      <HeaderContent pageName={title} userState={userState} />
+    </div>
+  );
+};
+
+interface HeaderContentProps {
+  pageName?: string;
+  userState?: UserStateType;
+}
+
+const HeaderContent = ({ pageName, userState }: HeaderContentProps) => {
+  return (
+    <header className="flex w-full flex-wrap items-center justify-between gap-6 bg-white p-4">
+      <ImageViewer
+        imageSrc={Previous}
+        alt={"logo.svg"}
+        width={42}
+        height={42}
+      />
+      <div className="relative inline-flex flex-col items-center">
+        <h1 className="font-bold">
+          {pageName === "" ? "MultiStore" : pageName}
+        </h1>
+      </div>
+
+      <Navigation userState={userState} />
+    </header>
+  );
+};
