@@ -1,17 +1,17 @@
 import { StaticImageData } from "next/image";
 import Image from "next/image";
 
-interface CardGridItemProps {
+interface ImageCardProps {
   imageSrc: string | StaticImageData;
   className?: string;
 }
 
-export const CardGridItem = ({
+export const ImageCard = ({
   imageSrc,
   className = "flex-1"
-}: CardGridItemProps) => {
+}: ImageCardProps) => {
   return (
-    <div className={`flex w-full flex-col gap-1 p-1 ${className}`}>
+    <div className={`flex flex-col gap-1 p-1 ${className}`}>
       <div className="relative flex aspect-square w-full flex-col items-center justify-center">
         <Image src={imageSrc} alt="carousel" fill className="object-cover" />
       </div>

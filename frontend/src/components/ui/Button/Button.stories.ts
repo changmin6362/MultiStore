@@ -14,7 +14,8 @@ const meta = {
     state: {
       control: "select",
       options: States
-    }
+    },
+    disabled: { control: "boolean" }
   }
 } satisfies Meta<typeof Button>;
 
@@ -25,6 +26,7 @@ export const DefaultButton: Story = {
   args: {
     label: "로그인",
     buttonType: Buttons[0],
-    state: States[0]
+    state: States[0],
+    disabled: false
   }
 };

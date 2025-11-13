@@ -1,4 +1,4 @@
-import { CardGridItem } from "../internal/CardGridItem";
+import { ImageCard } from "../../../ui/ImageCard/ImageCard";
 
 import p1 from "@public/product1.png";
 import p2 from "@public/product2.png";
@@ -25,7 +25,7 @@ export const CardGridSecondary = () => {
       </div>
       <div className="flex w-full flex-1 flex-wrap items-start justify-between">
         {productImages.map((imageSrc, index) => (
-          <CardGridItem
+          <ImageCard
             key={index}
             imageSrc={imageSrc}
             className={`flex-1/3 md:flex-1/6 ${
