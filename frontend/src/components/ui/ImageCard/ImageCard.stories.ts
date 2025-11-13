@@ -13,7 +13,9 @@ const meta = {
       control: "text",
       description: "정적 에셋 경로 또는 외부 이미지 URL"
     },
-    className: { control: "text" }
+    alt: { control: "text" },
+    className: { control: "text" },
+    useLabel: { control: "boolean" }
   }
 } satisfies Meta<typeof ImageCard>;
 
@@ -22,6 +24,8 @@ export default meta;
 export const DefaultImageCard: StoryObj<typeof ImageCard> = {
   args: {
     imageSrc: PLACEHOLDER_IMAGE_URL,
-    className: "flex-1"
+    alt: "ImageCard",
+    className: "flex-1",
+    useLabel: true
   }
 };
