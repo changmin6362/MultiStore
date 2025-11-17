@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/Input/Input";
-import { Divider } from "./Divider";
+import { Divider } from "@/components/ui/Divider/Divider";
 import type { UserProfileData } from "../types";
 
 interface DataSectionListProps {

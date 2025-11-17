@@ -3,14 +3,11 @@
 import { Input } from "@/components/ui/Input/Input";
 import { Checkbox } from "@/components/ui/Checkbox/Checkbox";
 import { Button } from "@/components/ui/Button/Button";
+import { Divider } from "@/components/ui/Divider/Divider";
+
 import { AuthFormWrapper } from "../AuthFormWrapper/AuthFormWrapper";
 import { useSigninForm } from "./hooks/useSigninForm";
 import { formatValidationErrors, getErrorMessage } from "./utils/errorUtils";
-
-// form 디자인용 div
-const Divider = () => {
-  return <div className="w-full border-b border-gray-400" />;
-};
 
 interface SigninFormProps {
   onSignin: (data: { email: string; password: string }) => void;

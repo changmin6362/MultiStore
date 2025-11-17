@@ -1,12 +1,10 @@
 import { StaticImageData } from "next/image";
 import { ImageCard } from "@/components/ui/ImageCard/ImageCard";
 import { Button } from "@/components/ui/Button/Button";
+import { Divider } from "@/components/ui/Divider/Divider";
+
 import plus from "@public/plus_button.svg";
 import minus from "@public/minus_button.svg";
-
-const Divider = () => {
-  return <div className="w-full border-b border-gray-400" />;
-};
 
 export interface ProductInfo {
   storeName: string;
