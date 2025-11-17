@@ -1,3 +1,9 @@
+import { CardGrid } from "@/components/common/CardGrid/CardGrid";
+
 export default function Search() {
-  return <div>Search Page</div>;
+  return (
+    <div>
+      <CardGrid variant="Secondary" />
+    </div>
+  );
 }
