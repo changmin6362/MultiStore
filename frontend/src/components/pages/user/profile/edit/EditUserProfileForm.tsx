@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/Button/Button";
 import { DataSectionList } from "./internal/DataSectionList";
 import type { UserProfileData } from "./types";
 import { EditUserProfileImage } from "./EditUserProfileImage";
+import { useEditUserProfile } from "./hooks/useEditUserProfile";
+import { submitUserProfile } from "./services/userProfileService";
 
 export const EditUserProfileForm = () => {
   const initialData: UserProfileData = {
@@ -18,41 +19,14 @@ export const EditUserProfileForm = () => {
     profileUrl: "https://via.placeholder.com/150"
   };
 
-  const [userData, setUserData] = useState<UserProfileData>(initialData);
-  const [isLoading, setIsLoading] = useState(false);
+  const { userData, setUserData, isLoading, setIsLoading } =
+    useEditUserProfile(initialData);
 
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
-      const formData = new FormData();
-
-      // userData에서 profileUrl 추출
-      const { profileUrl, ...dataToSend } = userData;
-
-      // userData 전체를 JSON으로 전송 (profileUrl은 string만 포함)
-      formData.append(
-        "data",
-        JSON.stringify({
-          ...dataToSend,
-          profileUrl: typeof profileUrl === "string" ? profileUrl : ""
-        })
-      );
-
-      // profileUrl이 File이면 profile 필드로 전송
-      if (profileUrl instanceof File) {
-        formData.append("profile", profileUrl);
-      }
-
-      const response = await fetch("/api/user/profile", {
-        method: "PUT",
-        body: formData
-      });
-
-      if (response.ok) {
-        window.location.href = "/user/profile";
-      } else {
-        console.error("프로필 수정 실패");
-      }
+      await submitUserProfile(userData);
+      window.location.href = "/user/profile";
     } catch (error) {
       console.error("에러:", error);
     } finally {

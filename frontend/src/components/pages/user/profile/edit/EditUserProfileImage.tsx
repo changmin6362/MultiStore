@@ -1,43 +1,31 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { ImageCard } from "@/components/ui/ImageCard/ImageCard";
 import type { UserProfileData } from "./types";
+import { useFileUpload } from "./hooks/useFileUpload";
 
 interface EditUserProfileImageProps {
   userData: UserProfileData;
   onChange: (data: UserProfileData) => void;
 }
 
+// 사용자 프로필 이미지 수정 컴포넌트
 export const EditUserProfileImage = ({
   userData,
   onChange
 }: EditUserProfileImageProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [previewUrl, setPreviewUrl] = useState<string>(
-    typeof userData.profileUrl === "string" ? userData.profileUrl : ""
-  );
+  const { previewUrl, handleFileChange } = useFileUpload(userData, onChange);
 
   const handleClick = () => {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
-    // userData의 profileUrl을 File 객체로 업데이트
-    onChange({
-      ...userData,
-      profileUrl: file
-    });
-
-    // 미리보기 업데이트
-    const reader = new FileReader();
-    reader.onload = () => {
-      setPreviewUrl(reader.result as string);
-    };
-    reader.readAsDataURL(file);
+    handleFileChange(file);
   };
 
   return (
@@ -58,7 +46,7 @@ export const EditUserProfileImage = ({
         ref={fileInputRef}
         type="file"
         accept="image/*"
-        onChange={handleFileChange}
+        onChange={handleInputChange}
         className="hidden"
       />
     </div>
