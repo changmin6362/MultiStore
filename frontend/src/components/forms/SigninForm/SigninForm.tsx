@@ -28,6 +28,7 @@ export const SigninForm = ({
     isFormInvalid
   } = useSigninForm();
 
+  // 로그인 버튼 동작
   const handleLoginClick = () => {
     if (validateForm()) {
       onSignin({
@@ -37,9 +38,12 @@ export const SigninForm = ({
     }
   };
 
+  // 에러 메시지 검증
   const validationErrorMessage = formatValidationErrors(
     formState.validationErrors
   );
+
+  // 에러 메시지 표시
   const displayErrorMessage = getErrorMessage(
     validationErrorMessage,
     errorMessage
