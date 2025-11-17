@@ -1,6 +1,7 @@
 import Previous from "@public/previous.svg";
-import { ImageViewer } from "@/components/ui/ImageViewer/ImageViewer";
 import { Navigation } from "../internal/Navigation/Navigation";
+import { HeaderLogo } from "../internal/HeaderIcon/HeaderIcon";
+import { HeaderTitle } from "../internal/HeaderTitle/HeaderTitle";
 import { UserStateType } from "./type";
 
 interface HeaderProps extends HeaderContentProps {
@@ -20,21 +21,11 @@ interface HeaderContentProps {
   userState?: UserStateType;
 }
 
-const HeaderContent = ({ pageName, userState }: HeaderContentProps) => {
+const HeaderContent = ({ pageName = "", userState }: HeaderContentProps) => {
   return (
     <header className="flex w-full flex-wrap items-center justify-between gap-6 bg-white p-4">
-      <ImageViewer
-        imageSrc={Previous}
-        alt={"logo.svg"}
-        width={42}
-        height={42}
-      />
-      <div className="relative inline-flex flex-col items-center">
-        <h1 className="font-bold">
-          {pageName === "" ? "MultiStore" : pageName}
-        </h1>
-      </div>
-
+      <HeaderLogo imageSrc={Previous} alt="back" onBack={true} />
+      <HeaderTitle title={pageName} />
       <Navigation userState={userState} />
     </header>
   );
