@@ -13,7 +13,7 @@ export const Input = ({
 }: InputProps) => {
   return (
     <div
-      className={`flex items-center justify-start gap-2.5 overflow-hidden ${
+      className={`flex h-[60px] items-center justify-start gap-2.5 overflow-hidden ${
         // hasBorder 값에 따른 조건부 스타일 적용
         hasBorder
           ? "rounded-lg border border-gray-300"
@@ -23,7 +23,7 @@ export const Input = ({
       <input
         type={type}
         placeholder={placeholder}
-        className="flex-1 bg-transparent text-sm font-normal text-black outline-none"
+        className="flex-1 bg-transparent text-lg font-normal text-black outline-none"
         {...props}
       />
     </div>

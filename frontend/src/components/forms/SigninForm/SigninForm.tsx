@@ -51,7 +51,7 @@ export const SigninForm = ({
         <div className="rounded-lg border border-gray-400">
           {/* 이메일 입력창*/}
           <Input
-            placeholder="이메일 주소를 입력하세요"
+            placeholder="이메일 주소"
             type="email"
             value={formState.email}
             onChange={(e) => updateEmail(e.target.value)}
@@ -60,7 +60,7 @@ export const SigninForm = ({
           <Divider />
           {/* 비밀번호 입력창*/}
           <Input
-            placeholder="비밀번호를 입력하세요"
+            placeholder="비밀번호"
             type="password"
             value={formState.password}
             onChange={(e) => updatePassword(e.target.value)}
