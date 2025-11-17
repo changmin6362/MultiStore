@@ -1,6 +1,7 @@
 "use client";
 
 import { Input } from "@/components/ui/Input/Input";
+import { Button } from "@/components/ui/Button/Button";
 import { AuthFormWrapper } from "../AuthFormWrapper/AuthFormWrapper";
 import { useSignupForm } from "./hooks/useSignupForm";
 import { formatValidationErrors, getErrorMessage } from "./utils/errorUtils";
@@ -55,37 +56,44 @@ export const SignupForm = ({
   );
 
   return (
-    <AuthFormWrapper
-      errorMessage={displayErrorMessage}
-      buttonLabel="회원가입"
-      onSubmit={handleSignupClick}
-      isDisabled={isFormInvalid}
-    >
-      {/* 이메일 입력창*/}
-      <Input
-        placeholder="이메일 주소"
-        type="email"
-        value={formState.email}
-        onChange={(e) => updateEmail(e.target.value)}
-        hasBorder={false}
-      />
-      <Divider />
-      {/* 닉네임 입력창*/}
-      <Input
-        placeholder="닉네임"
-        type="text"
-        value={formState.nickname}
-        onChange={(e) => updateNickname(e.target.value)}
-        hasBorder={false}
-      />
-      <Divider />
-      {/* 비밀번호 입력창*/}
-      <Input
-        placeholder="비밀번호"
-        type="password"
-        value={formState.password}
-        onChange={(e) => updatePassword(e.target.value)}
-        hasBorder={false}
+    <AuthFormWrapper>
+      <div className="flex w-full flex-col gap-2">
+        <div className="rounded-lg border border-gray-400">
+          {/* 이메일 입력창*/}
+          <Input
+            placeholder="이메일 주소"
+            type="email"
+            value={formState.email}
+            onChange={(e) => updateEmail(e.target.value)}
+            hasBorder={false}
+          />
+          <Divider />
+          {/* 닉네임 입력창*/}
+          <Input
+            placeholder="닉네임"
+            type="text"
+            value={formState.nickname}
+            onChange={(e) => updateNickname(e.target.value)}
+            hasBorder={false}
+          />
+          <Divider />
+          {/* 비밀번호 입력창*/}
+          <Input
+            placeholder="비밀번호"
+            type="password"
+            value={formState.password}
+            onChange={(e) => updatePassword(e.target.value)}
+            hasBorder={false}
+          />
+        </div>
+        {displayErrorMessage && (
+          <p className="text-sm text-red-500">{displayErrorMessage}</p>
+        )}
+      </div>
+      <Button
+        label="회원가입"
+        onClick={handleSignupClick}
+        disabled={isFormInvalid}
       />
     </AuthFormWrapper>
   );
