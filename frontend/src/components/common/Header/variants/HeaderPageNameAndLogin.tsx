@@ -1,6 +1,6 @@
 import Previous from "@public/previous.svg";
 import { Navigation } from "../internal/Navigation/Navigation";
-import { HeaderLogo } from "../internal/HeaderIcon/HeaderIcon";
+import { HeaderIcon } from "../internal/HeaderIcon/HeaderIcon";
 import { HeaderTitle } from "../internal/HeaderTitle/HeaderTitle";
 import { UserStateType } from "./type";
 
@@ -24,7 +24,7 @@ interface HeaderContentProps {
 const HeaderContent = ({ pageName = "", userState }: HeaderContentProps) => {
   return (
     <header className="flex w-full flex-wrap items-center justify-between gap-6 bg-white p-4">
-      <HeaderLogo imageSrc={Previous} alt="back" onBack={true} />
+      <HeaderIcon imageSrc={Previous} alt="back" onBack={true} />
       <HeaderTitle title={pageName} />
       <Navigation userState={userState} />
     </header>

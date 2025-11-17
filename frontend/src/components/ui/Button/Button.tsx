@@ -27,7 +27,7 @@ export const Button = ({
       type="submit"
       disabled={disabled}
       // 공통적으로 적용될 버튼의 기본 스타일
-      className={`flex flex-1 flex-col items-center justify-center rounded-[5px] border px-1.5 py-1.5 ${
+      className={`flex w-full flex-1 flex-col items-center justify-center rounded-[5px] border px-1.5 py-1.5 ${
         disabled
           ? // disabled가 true일 때 적용된 스타일
             "cursor-not-allowed border-gray-400 bg-gray-400 text-white"

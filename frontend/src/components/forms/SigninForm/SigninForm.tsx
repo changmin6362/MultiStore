@@ -1,7 +1,10 @@
-import { useState } from "react";
+"use client";
+
 import { Input } from "@/components/ui/Input/Input";
 import { Button } from "@/components/ui/Button/Button";
 import { Checkbox } from "@/components/ui/Checkbox/Checkbox";
+import { useSigninForm } from "./hooks/useSigninForm";
+import { formatValidationErrors, getErrorMessage } from "./utils/errorUtils";
 
 // form 디자인용 div
 const Divider = () => {
@@ -17,37 +20,57 @@ export const SigninForm = ({
   onSignin,
   errorMessage = ""
 }: SigninFormProps) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const isFormInvalid = !email || !password;
+  const {
+    formState,
+    updateEmail,
+    updatePassword,
+    validateForm,
+    isFormInvalid
+  } = useSigninForm();
 
   const handleLoginClick = () => {
-    onSignin({ email, password });
+    if (validateForm()) {
+      onSignin({
+        email: formState.email,
+        password: formState.password
+      });
+    }
   };
 
+  const validationErrorMessage = formatValidationErrors(
+    formState.validationErrors
+  );
+  const displayErrorMessage = getErrorMessage(
+    validationErrorMessage,
+    errorMessage
+  );
+
   return (
-    <div className="justify-first flex w-full flex-col items-center gap-6">
+    <div className="justify-first flex w-full flex-col items-center gap-6 rounded-2xl border border-gray-400 px-4 py-6">
       <div className="flex w-full flex-col gap-2">
-        <div className="rounded-lg border border-gray-400 focus-within:border-black">
+        <div className="rounded-lg border border-gray-400">
           {/* 이메일 입력창*/}
           <Input
-            placeholder="이메일 주소"
+            placeholder="이메일 주소를 입력하세요"
             type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={formState.email}
+            onChange={(e) => updateEmail(e.target.value)}
+            hasBorder={false}
           />
           <Divider />
           {/* 비밀번호 입력창*/}
           <Input
-            placeholder="비밀번호"
+            placeholder="비밀번호를 입력하세요"
             type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={formState.password}
+            onChange={(e) => updatePassword(e.target.value)}
+            hasBorder={false}
           />
         </div>
-        {/* 에러 메시지 표시 */}
-        <p className="text-sm text-red-500">{errorMessage}</p>
+        {/* 에러 메시지 표시 (유효성 검사 + 서버 에러) */}
+        {displayErrorMessage && (
+          <p className="text-sm text-red-500">{displayErrorMessage}</p>
+        )}
         {/* 체크박스 */}
         <Checkbox label="로그인 상태 유지" />
       </div>
