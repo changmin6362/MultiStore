@@ -10,10 +10,8 @@ import p7 from "@public/product7.png";
 import p8 from "@public/product8.png";
 import p9 from "@public/product9.png";
 import p10 from "@public/product10.png";
-import p11 from "@public/product11.png";
-import p12 from "@public/product12.png";
 
-const productImages = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12];
+const productImages = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10];
 
 export const CardGridSecondary = () => {
   return (
@@ -28,7 +26,7 @@ export const CardGridSecondary = () => {
           <ImageCard
             key={index}
             imageSrc={imageSrc}
-            className={`flex-1/3 md:flex-1/6 ${
+            className={`flex-1/3 md:flex-1/5 ${
               index >= 6 ? "hidden md:block" : ""
             }`}
           />
