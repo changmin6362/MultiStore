@@ -1,7 +1,7 @@
 import { InputHTMLAttributes } from "react";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
-  placeholder: string;
+  placeholder?: string;
   hasBorder?: boolean; // border 유무 선택
 }
 
