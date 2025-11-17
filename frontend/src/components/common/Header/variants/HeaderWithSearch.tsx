@@ -1,7 +1,8 @@
 import Logo from "@public/logo.svg";
-import { ImageViewer } from "@/components/ui/ImageViewer/ImageViewer";
 import { Navigation } from "../internal/Navigation/Navigation";
 import { SearchBar } from "../internal/SearchBar/SearchBar";
+import { HeaderLogo } from "../internal/HeaderIcon/HeaderIcon";
+import { HeaderTitle } from "../internal/HeaderTitle/HeaderTitle";
 import { UserStateType } from "./type";
 
 interface HeaderProps extends HeaderContentProps {
@@ -24,21 +25,15 @@ interface HeaderContentProps {
 }
 
 const HeaderContent = ({
-  storeName,
+  storeName = "",
   userState,
   children
 }: HeaderContentProps) => {
   return (
     <header className="flex w-full flex-wrap items-center justify-between gap-6 bg-white p-4">
-      <ImageViewer imageSrc={Logo} alt={"logo.svg"} width={42} height={42} />
-      <div className="relative inline-flex flex-col items-center">
-        <h1 className="font-bold">
-          {storeName === "" ? "MultiStore" : storeName}
-        </h1>
-      </div>
-
+      <HeaderLogo imageSrc={Logo} alt="logo" />
+      <HeaderTitle title={storeName} />
       {children && children}
-
       <Navigation userState={userState} />
     </header>
   );

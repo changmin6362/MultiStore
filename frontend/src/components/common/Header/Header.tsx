@@ -1,6 +1,9 @@
+"use client";
+
 import { HeaderPageNameAndLogin } from "./variants/HeaderPageNameAndLogin";
 import { HeaderWithSearch } from "./variants/HeaderWithSearch";
 import { HeaderStoreNameOnly } from "./variants/HeaderStoreNameOnly";
+import { useHeaderVariantContext } from "./contexts/HeaderVariantProvider";
 
 import { UserStateType } from "./variants/type";
 
@@ -8,25 +11,24 @@ export const HeaderVariants = [
   "pageNameAndLogin",
   "withSearch",
   "storeNameOnly"
-];
-
-type HeaderVariantType = (typeof HeaderVariants)[number];
+] as const;
 
 interface HeaderProps {
-  variant: HeaderVariantType;
   title?: string;
   userState?: UserStateType;
 }
 
 export const Header = (props: HeaderProps) => {
-  switch (props.variant) {
-    case "pageNameAndLogin":
+  const variant = useHeaderVariantContext();
+
+  switch (variant) {
+    case HeaderVariants[0]: // pageNameAndLogin
       return <HeaderPageNameAndLogin {...props} />;
 
-    case "withSearch":
+    case HeaderVariants[1]: // withSearch
       return <HeaderWithSearch {...props} />;
 
-    case "storeNameOnly":
+    case HeaderVariants[2]: // storeNameOnly
       return <HeaderStoreNameOnly {...props} />;
 
     default:
