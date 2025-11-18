@@ -16,6 +16,7 @@ export interface ProductInfo {
 
 interface CartItemProps {
   product: ProductInfo;
+  quantity: number;
   onQuantityIncrease: () => void;
   onQuantityDecrease: () => void;
   onDelete: () => void;
@@ -24,6 +25,7 @@ interface CartItemProps {
 
 export const CartItem = ({
   product,
+  quantity,
   onQuantityIncrease,
   onQuantityDecrease,
   onDelete,
@@ -57,10 +59,11 @@ export const CartItem = ({
           <p className="truncate text-black">{product.option}</p>
 
           {/* 수량 제어 버튼 */}
-          <div className="flex justify-start gap-2.5">
+          <div className="flex items-center justify-start gap-2.5">
             <div className="size-4 cursor-pointer" onClick={onQuantityIncrease}>
               <ImageCard imageSrc={plus} alt="수량 증가" useLabel={false} />
             </div>
+            <span className="text-sm text-black">{quantity}</span>
             <div className="size-4 cursor-pointer" onClick={onQuantityDecrease}>
               <ImageCard imageSrc={minus} alt="수량 감소" useLabel={false} />
             </div>

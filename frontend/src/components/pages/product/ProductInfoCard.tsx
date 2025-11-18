@@ -38,7 +38,7 @@ export const ProductInfoCard = () => {
         </div>
         {/* 사용자 액션 버튼 */}
         <div className="flex w-full items-center justify-between gap-2.5">
-          <Button label="장바구니에 담기" state="Positive" />
+          <Button label="장바구니에 담기" state="Positive" href="/cart" />
           <Button label="주문하기" state="Positive" />
         </div>
       </div>
