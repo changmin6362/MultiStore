@@ -22,5 +22,5 @@ export const calculateLabelWidth = (displayData: DisplayItem[]): string => {
   const maxLabelLength = Math.max(
     ...displayData.map((item) => item.label.length)
   );
-  return `${maxLabelLength * 0.6 + 1}em`;
+  return `${maxLabelLength * 0.7 + 1}em`;
 };
