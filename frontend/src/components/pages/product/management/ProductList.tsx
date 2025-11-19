@@ -4,6 +4,7 @@ import type { Product } from "./types";
 import { initialProducts } from "./constants/mockData";
 import { getStatusColor } from "./utils/statusUtils";
 import { ProductCard } from "./internal/ProductCard";
+import { Button } from "@/components/ui/Button/Button";
 
 interface ProductListProps {
   onEdit: (productId: number) => void;
@@ -39,12 +40,11 @@ export const ProductList = ({
       {/* 헤더 */}
       <div className="mb-6 flex flex-col items-center justify-between gap-4">
         <h1 className="text-2xl font-bold text-gray-800">상품 관리</h1>
-        <button
+        <Button
+          label="새 상품 등록하기"
           onClick={handleAddNew}
-          className="w-full rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white shadow-md transition duration-150 ease-in-out hover:bg-blue-700"
-        >
-          + 새 상품 등록
-        </button>
+          href="/store/1234/product/register"
+        />
       </div>
 
       {/* 상품 카드 목록 */}

@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/Button/Button";
 import type { Product } from "../types";
 
 interface ProductCardProps {
@@ -44,18 +45,16 @@ export const ProductCard = ({
 
       {/* 3줄: 관리 버튼들 (영역을 꽉 채움) */}
       <div className="flex justify-between gap-3 border-t pt-3">
-        <button
+        <Button
+          label="수정"
           onClick={() => onEdit(product.id)}
-          className="flex-1 rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-200"
-        >
-          수정
-        </button>
-        <button
+          state="Positive"
+        />
+        <Button
+          label="삭제"
           onClick={() => onDelete(product.id)}
-          className="flex-1 rounded-lg bg-red-100 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-200"
-        >
-          삭제
-        </button>
+          state="Negative"
+        />
       </div>
     </div>
   );
