@@ -1,5 +1,5 @@
-import { ProductDescription } from "@/components/pages/product/ProductDescription";
-import { ProductInfoCard } from "@/components/pages/product/ProductInfoCard";
+import { ProductDescription } from "@/components/pages/product/detail/ProductDescription";
+import { ProductInfoCard } from "@/components/pages/product/detail/ProductInfoCard";
 import { ImageCard } from "@/components/ui/ImageCard/ImageCard";
 import hamburgerImage from "@public/hamburger.png";
 

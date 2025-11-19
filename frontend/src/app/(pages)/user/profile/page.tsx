@@ -1,10 +1,9 @@
-import Link from "next/link";
-
 import { AuthFormWrapper } from "@/components/forms/AuthFormWrapper/AuthFormWrapper";
 
 import { ProfileCard } from "@/components/pages/user/profile/ProfileCard";
 import { AddressCard } from "@/components/pages/user/profile/AddressCard";
 import { PaymentCard } from "@/components/pages/user/profile/PaymentCard";
+import { MerchantActionSection } from "@/components/pages/user/profile/MerchantActionSection";
 
 export default function UserProfile() {
   return (
@@ -16,12 +15,8 @@ export default function UserProfile() {
         <AddressCard />
         {/* 결제 수단 정보 */}
         <PaymentCard />
+        <MerchantActionSection />
       </AuthFormWrapper>
-      <div className="flex w-full justify-center gap-4">
-        <Link href="/merchant/register">
-          <p>판매자 등록하러 가기</p>
-        </Link>
-      </div>
     </>
   );
 }
