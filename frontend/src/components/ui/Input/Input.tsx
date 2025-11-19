@@ -13,10 +13,10 @@ export const Input = ({
 }: InputProps) => {
   return (
     <div
-      className={`flex h-[60px] items-center justify-start gap-2.5 overflow-hidden ${
+      className={`flex h-[60px] w-full items-center justify-start gap-2.5 overflow-hidden ${
         // hasBorder 값에 따른 조건부 스타일 적용
         hasBorder
-          ? "rounded-lg border border-gray-300"
+          ? "rounded-lg border border-gray-400"
           : "rounded-lg border border-transparent"
       } px-4 py-1.5`}
     >
