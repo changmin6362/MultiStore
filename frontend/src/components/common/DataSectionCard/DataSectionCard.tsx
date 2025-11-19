@@ -1,8 +1,5 @@
 import { Fragment } from "react";
-
-const Divider = () => {
-  return <div className="w-full border-b border-gray-400" />;
-};
+import { Divider } from "@/components/ui/Divider/Divider";
 
 type DataPair = { label: string; value: string };
 type StringSection = string[];

@@ -6,20 +6,24 @@ interface ImageCardProps {
   alt?: string;
   className?: string;
   useLabel?: boolean;
+  isCircle?: boolean;
 }
 
 export const ImageCard = ({
   imageSrc,
   alt = "ImageCard",
   className = "flex-1",
-  useLabel = true
+  useLabel = true,
+  isCircle = false
 }: ImageCardProps) => {
   return (
     <div
       className={`flex flex-col ${useLabel ? "gap-1 p-1" : ""} ${className}`}
     >
       {/* aspect로 종횡비를 지정함으로써 fill을 정상적으로 사용 가능 */}
-      <div className="relative flex aspect-square w-full flex-col items-center justify-center">
+      <div
+        className={`relative flex aspect-square w-full flex-col items-center justify-center ${isCircle ? "overflow-hidden rounded-full" : ""}`}
+      >
         <Image src={imageSrc} alt={alt} fill className="object-cover" />
       </div>
       {useLabel && (

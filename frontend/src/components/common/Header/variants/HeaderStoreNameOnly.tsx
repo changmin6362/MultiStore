@@ -1,5 +1,5 @@
 import Logo from "@public/logo.svg";
-import { HeaderLogo } from "../internal/HeaderIcon/HeaderIcon";
+import { HeaderIcon } from "../internal/HeaderIcon/HeaderIcon";
 import { HeaderTitle } from "../internal/HeaderTitle/HeaderTitle";
 
 interface HeaderProps extends HeaderContentProps {
@@ -21,7 +21,7 @@ interface HeaderContentProps {
 const HeaderContent = ({ storeName = "" }: HeaderContentProps) => {
   return (
     <header className="flex w-full flex-wrap items-center justify-center gap-6 bg-white p-4">
-      <HeaderLogo imageSrc={Logo} alt="logo" />
+      <HeaderIcon imageSrc={Logo} alt="logo" />
       <HeaderTitle title={storeName} />
     </header>
   );

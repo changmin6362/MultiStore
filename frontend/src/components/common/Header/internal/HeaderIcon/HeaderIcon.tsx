@@ -43,6 +43,3 @@ export const HeaderIcon = ({
     </Link>
   );
 };
-
-// 하위 호환성을 위한 별칭
-export const HeaderLogo = HeaderIcon;
