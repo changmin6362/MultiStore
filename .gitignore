@@ -10,3 +10,8 @@ Desktop.ini
 # Environment
 .env
 .env.local
+
+
+# Backend
+.gradle
+build/
