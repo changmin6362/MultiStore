@@ -6,21 +6,10 @@ import { Divider } from "@/components/ui/Divider/Divider";
 
 import { AuthFormWrapper } from "../AuthFormWrapper/AuthFormWrapper";
 import { useSignupForm } from "./hooks/useSignupForm";
+import { useSignup } from "@/hooks/useSignup";
 import { formatValidationErrors, getErrorMessage } from "./utils/errorUtils";
 
-interface SignupFormProps {
-  onSignup: (data: {
-    email: string;
-    nickname: string;
-    password: string;
-  }) => void;
-  errorMessage?: string;
-}
-
-export const SignupForm = ({
-  onSignup,
-  errorMessage = ""
-}: SignupFormProps) => {
+export const SignupForm = () => {
   const {
     formState,
     updateEmail,
@@ -30,12 +19,14 @@ export const SignupForm = ({
     isFormInvalid
   } = useSignupForm();
 
+  const { signup, loading, error: apiError } = useSignup();
+
   // 회원가입 버튼 동작
-  const handleSignupClick = () => {
+  const handleSignupClick = async () => {
     if (validateForm()) {
-      onSignup({
-        email: formState.email,
-        nickname: formState.nickname,
+      await signup({
+        emailAddress: formState.email,
+        nickName: formState.nickname,
         password: formState.password
       });
     }
@@ -46,10 +37,10 @@ export const SignupForm = ({
     formState.validationErrors
   );
 
-  // 에러 메시지 표시
+  // 에러 메시지 표시 (폼 검증 에러 우선, API 에러 다음)
   const displayErrorMessage = getErrorMessage(
     validationErrorMessage,
-    errorMessage
+    apiError || ""
   );
 
   return (
@@ -63,6 +54,7 @@ export const SignupForm = ({
             value={formState.email}
             onChange={(e) => updateEmail(e.target.value)}
             hasBorder={false}
+            disabled={loading}
           />
           <Divider />
           {/* 닉네임 입력창*/}
@@ -72,6 +64,7 @@ export const SignupForm = ({
             value={formState.nickname}
             onChange={(e) => updateNickname(e.target.value)}
             hasBorder={false}
+            disabled={loading}
           />
           <Divider />
           {/* 비밀번호 입력창*/}
@@ -81,6 +74,7 @@ export const SignupForm = ({
             value={formState.password}
             onChange={(e) => updatePassword(e.target.value)}
             hasBorder={false}
+            disabled={loading}
           />
         </div>
         {displayErrorMessage && (
@@ -88,9 +82,9 @@ export const SignupForm = ({
         )}
       </div>
       <Button
-        label="회원가입"
+        label={loading ? "회원가입 중..." : "회원가입"}
         onClick={handleSignupClick}
-        disabled={isFormInvalid}
+        disabled={isFormInvalid || loading}
       />
     </AuthFormWrapper>
   );

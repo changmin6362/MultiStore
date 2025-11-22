@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Input } from "@/components/ui/Input/Input";
 import { Checkbox } from "@/components/ui/Checkbox/Checkbox";
 import { Button } from "@/components/ui/Button/Button";
@@ -7,17 +8,11 @@ import { Divider } from "@/components/ui/Divider/Divider";
 
 import { AuthFormWrapper } from "../AuthFormWrapper/AuthFormWrapper";
 import { useSigninForm } from "./hooks/useSigninForm";
+import { useLogin } from "@/hooks/useLogin";
 import { formatValidationErrors, getErrorMessage } from "./utils/errorUtils";
 
-interface SigninFormProps {
-  onSignin: (data: { email: string; password: string }) => void;
-  errorMessage?: string;
-}
-
-export const SigninForm = ({
-  onSignin,
-  errorMessage = ""
-}: SigninFormProps) => {
+export const SigninForm = () => {
+  const [rememberMe, setRememberMe] = useState(false);
   const {
     formState,
     updateEmail,
@@ -26,11 +21,13 @@ export const SigninForm = ({
     isFormInvalid
   } = useSigninForm();
 
+  const { login, loading, error: apiError } = useLogin();
+
   // 로그인 버튼 동작
-  const handleLoginClick = () => {
+  const handleLoginClick = async () => {
     if (validateForm()) {
-      onSignin({
-        email: formState.email,
+      await login({
+        emailAddress: formState.email,
         password: formState.password
       });
     }
@@ -41,10 +38,10 @@ export const SigninForm = ({
     formState.validationErrors
   );
 
-  // 에러 메시지 표시
+  // 에러 메시지 표시 (폼 검증 에러 우선, API 에러 다음)
   const displayErrorMessage = getErrorMessage(
     validationErrorMessage,
-    errorMessage
+    apiError || ""
   );
 
   return (
@@ -58,6 +55,7 @@ export const SigninForm = ({
             value={formState.email}
             onChange={(e) => updateEmail(e.target.value)}
             hasBorder={false}
+            disabled={loading}
           />
           <Divider />
           {/* 비밀번호 입력창*/}
@@ -67,17 +65,22 @@ export const SigninForm = ({
             value={formState.password}
             onChange={(e) => updatePassword(e.target.value)}
             hasBorder={false}
+            disabled={loading}
           />
         </div>
         {displayErrorMessage && (
           <p className="text-sm text-red-500">{displayErrorMessage}</p>
         )}
-        <Checkbox label="로그인 상태 유지" />
+        <Checkbox
+          label="로그인 상태 유지"
+          checked={rememberMe}
+          onChange={(e) => setRememberMe(e.target.checked)}
+        />
       </div>
       <Button
-        label="로그인"
+        label={loading ? "로그인 중..." : "로그인"}
         onClick={handleLoginClick}
-        disabled={isFormInvalid}
+        disabled={isFormInvalid || loading}
       />
     </AuthFormWrapper>
   );
