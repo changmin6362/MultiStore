@@ -9,9 +9,9 @@ import { fetchBackendApi, handleApiError } from "../utils";
  */
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ userId: string }> }
+  { params }: { params: { userId: string } }
 ) {
-  const { userId } = await params;
+  const { userId } = params;
 
   const result = await fetchBackendApi<UserResponse>({
     method: "GET",
@@ -34,10 +34,10 @@ export async function GET(
  */
 export async function PUT(
   request: Request,
-  { params }: { params: Promise<{ userId: string }> }
+  { params }: { params: { userId: string } }
 ) {
   try {
-    const { userId } = await params;
+    const { userId } = params;
     const body = await request.json();
 
     const result = await fetchBackendApi<UserResponse>({
@@ -70,9 +70,9 @@ export async function PUT(
  */
 export async function DELETE(
   request: Request,
-  { params }: { params: Promise<{ userId: string }> }
+  { params }: { params: { userId: string } }
 ) {
-  const { userId } = await params;
+  const { userId } = params;
 
   const result = await fetchBackendApi<void>({
     method: "DELETE",
