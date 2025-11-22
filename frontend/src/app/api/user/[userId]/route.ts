@@ -15,7 +15,7 @@ export async function GET(
 
   const result = await fetchBackendApi<UserResponse>({
     method: "GET",
-    url: `/api/users/${userId}`
+    url: `/api/user/${userId}`
   });
 
   if (!result.success) {
@@ -42,7 +42,7 @@ export async function PUT(
 
     const result = await fetchBackendApi<UserResponse>({
       method: "PUT",
-      url: `/api/users/${userId}`,
+      url: `/api/user/${userId}`,
       body
     });
 
@@ -76,7 +76,7 @@ export async function DELETE(
 
   const result = await fetchBackendApi<void>({
     method: "DELETE",
-    url: `/api/users/${userId}`
+    url: `/api/user/${userId}`
   });
 
   if (!result.success) {
