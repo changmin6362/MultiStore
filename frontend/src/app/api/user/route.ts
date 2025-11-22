@@ -9,7 +9,7 @@ import { fetchBackendApi, handleApiError } from "./utils";
 export async function GET() {
   const result = await fetchBackendApi<UserListResponse>({
     method: "GET",
-    url: "/api/users"
+    url: "/api/user"
   });
 
   // success 필드로 타입 좁히기
@@ -33,7 +33,7 @@ export async function POST(request: Request) {
 
     const result = await fetchBackendApi<UserResponse>({
       method: "POST",
-      url: "/api/users",
+      url: "/api/user",
       body
     });
 
