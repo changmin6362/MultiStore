@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { UserStateType, UserStates } from "../../variants/type";
 import { ImageViewer } from "@/components/ui/ImageViewer/ImageViewer";
+import { useLogout } from "@/hooks/useLogout";
 
 import Cart from "@public/cart.svg";
 
@@ -12,23 +12,12 @@ interface NavigationProps {
 }
 
 export const Navigation = ({ userState }: NavigationProps) => {
-  const router = useRouter();
   const isUser = userState === UserStates[0];
-
-  const handleLogout = () => {
-    // 웹 스토리지에서 토큰 제거
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    sessionStorage.removeItem("accessToken");
-    sessionStorage.removeItem("refreshToken");
-
-    // 홈으로 이동
-    router.push("/");
-  };
+  const { logout } = useLogout();
 
   const navigationItems = isUser
     ? [
-        { id: 1, label: "로그아웃", action: handleLogout, href: null },
+        { id: 1, label: "로그아웃", action: logout, href: null },
         { id: 2, label: "마이페이지", action: null, href: "/user/profile" }
       ]
     : [
@@ -43,15 +32,15 @@ export const Navigation = ({ userState }: NavigationProps) => {
     >
       {navigationItems.map((item) =>
         item.action ? (
-          <button
+          <div
             key={item.id}
             onClick={item.action}
             className="relative inline-flex flex-[0_0_auto] cursor-pointer items-center justify-center rounded-lg p-2"
           >
             <span className="relative flex items-center justify-center whitespace-nowrap">
-              {item.label}
+            {item.label}
             </span>
-          </button>
+          </div>
         ) : (
           <Link
             key={item.id}
