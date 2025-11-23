@@ -1,17 +1,27 @@
+import { cookies } from "next/headers";
+
 /**
  * POST /api/auth/verify
- * 액세스 토큰 검증
+ * 액세스 토큰 검증 (쿠키에서 access_token을 읽어 백엔드로 위임)
  */
 export async function POST(request: Request) {
   try {
-    const { accessToken } = (await request.json()) as { accessToken: string };
+    let accessToken: string | undefined;
+    try {
+      const body = await request.json();
+      accessToken = body?.accessToken;
+    } catch {
+      // body 없음
+    }
+
+    if (!accessToken) {
+      const cookieStore = await cookies();
+      accessToken = cookieStore.get("access_token")?.value;
+    }
 
     if (!accessToken) {
       return Response.json(
-        {
-          error: "토큰이 없습니다",
-          status: 400
-        },
+        { error: "토큰이 없습니다", status: 400 },
         { status: 400 }
       );
     }
@@ -29,10 +39,7 @@ export async function POST(request: Request) {
 
     if (!response.ok) {
       return Response.json(
-        {
-          error: "토큰이 유효하지 않습니다",
-          status: 401
-        },
+        { error: "토큰이 유효하지 않습니다", status: 401 },
         { status: 401 }
       );
     }

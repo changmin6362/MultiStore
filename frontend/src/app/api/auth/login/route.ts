@@ -1,11 +1,10 @@
 import type { LoginRequest, AuthResponse } from "../types";
 import { fetchAuthApi, handleAuthError } from "../utils";
+import { NextResponse } from "next/server";
 
 /**
  * POST /api/auth/login
  * 로그인
- * @param {Request} request - 이메일, 비밀번호를 포함한 요청
- * @returns {AuthResponse} 사용자 정보 및 토큰
  */
 export async function POST(request: Request) {
   try {
@@ -21,7 +20,43 @@ export async function POST(request: Request) {
       return handleAuthError(result.error, "로그인 실패");
     }
 
-    return Response.json(result.data, { status: 200 });
+    // JWT를 HttpOnly 쿠키로 저장
+    const res = NextResponse.json(
+      {
+        success: true,
+        data: {
+          userId: result.data.userId,
+          emailAddress: result.data.emailAddress,
+          nickName: result.data.nickName,
+          createdAt: result.data.createdAt
+        }
+      },
+      { status: 200 }
+    );
+
+    const maxAge = 60 * 60; // 1시간 (access token)
+    const isProd = process.env.NODE_ENV === "production";
+    res.cookies.set("access_token", result.data.accessToken, {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: "lax",
+      path: "/",
+      maxAge
+    });
+
+    // Refresh Token 쿠키 (7일)
+    if (result.data.refreshToken) {
+      const refreshMaxAge = 60 * 60 * 24 * 7; // 7일
+      res.cookies.set("refresh_token", result.data.refreshToken, {
+        httpOnly: true,
+        secure: isProd,
+        sameSite: "lax",
+        path: "/",
+        maxAge: refreshMaxAge
+      });
+    }
+
+    return res;
   } catch (error) {
     return handleAuthError(
       {

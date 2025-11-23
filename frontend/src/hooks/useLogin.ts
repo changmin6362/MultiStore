@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { LoginRequest, AuthResponse } from "@/app/api/auth/types";
+import type { LoginRequest } from "@/app/api/auth/types";
 
 interface UseLoginReturn {
   login: (credentials: LoginRequest) => Promise<void>;
@@ -39,26 +39,9 @@ export const useLogin = (): UseLoginReturn => {
         return;
       }
 
-      const authData: AuthResponse = result.data;
-
-      // 토큰 저장 (localStorage 또는 쿠키)
-      localStorage.setItem("accessToken", authData.accessToken);
-      if (authData.refreshToken) {
-        localStorage.setItem("refreshToken", authData.refreshToken);
-      }
-
-      // 사용자 정보 저장
-      localStorage.setItem(
-        "currentUser",
-        JSON.stringify({
-          userId: authData.userId,
-          emailAddress: authData.emailAddress,
-          nickName: authData.nickName
-        })
-      );
-
-      // 로그인 성공 후 대시보드로 이동
+      // 로그인 성공 후 대시보드로 이동 + 서버 컴포넌트 재검증으로 쿠키 반영
       router.push("/");
+      router.refresh();
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "로그인 중 오류가 발생했습니다"

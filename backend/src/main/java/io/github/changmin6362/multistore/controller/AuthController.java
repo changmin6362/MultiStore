@@ -1,16 +1,26 @@
 package io.github.changmin6362.multistore.controller;
 
 import io.github.changmin6362.multistore.repository.UserRepository;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -18,9 +28,22 @@ import java.util.UUID;
 public class AuthController {
 
     private final UserRepository userRepository;
+    private final SecretKey jwtKey;
+    private final long accessTokenTtlSeconds;
+    private final long refreshTokenTtlSeconds;
+    // 데모용 인메모리 리프레시 토큰 저장소 (실서비스에서는 DB/Redis 사용 권장)
+    private final Map<String, RefreshTokenRecord> refreshTokenStore = new ConcurrentHashMap<>();
 
     public AuthController(UserRepository userRepository) {
         this.userRepository = userRepository;
+        // 간단한 JWT 시크릿 설정 (운영에서는 환경변수로 관리하세요)
+        String secret = System.getenv().getOrDefault("JWT_SECRET", "dev-secret-change-me-dev-secret-change-me");
+        // jjwt 0.11.x는 HMAC 키 최소 길이 권장. 256bit 이상 보장
+        byte[] keyBytes = secret.length() >= 32 ? secret.getBytes(StandardCharsets.UTF_8) :
+                (secret + "_padding_to_32_bytes________________________________").substring(0, 32).getBytes(StandardCharsets.UTF_8);
+        this.jwtKey = Keys.hmacShaKeyFor(keyBytes);
+        this.accessTokenTtlSeconds = 60L * 60L; // 1시간
+        this.refreshTokenTtlSeconds = 60L * 60L * 24L * 7L; // 7일
     }
 
     /**
@@ -84,9 +107,88 @@ public class AuthController {
      */
     @PostMapping("/logout")
     public ResponseEntity<Map<String, Object>> logout(@RequestBody(required = false) Map<String, Object> body) {
+        // 선택적으로 전달된 refreshToken을 무효화
+        if (body != null && body.get("refreshToken") instanceof String token) {
+            refreshTokenStore.remove(token);
+        }
         Map<String, Object> res = new HashMap<>();
         res.put("success", true);
         res.put("message", "로그아웃되었습니다");
+        return ResponseEntity.ok(res);
+    }
+
+    /**
+     * POST /api/auth/verify
+     * Authorization: Bearer <accessToken>
+     */
+    @PostMapping("/verify")
+    public ResponseEntity<Map<String, Object>> verify(@RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return error("토큰이 없습니다", 400, HttpStatus.BAD_REQUEST);
+        }
+
+        String token = authHeader.substring(7);
+        try {
+            Jws<Claims> jws = Jwts.parserBuilder()
+                    .setSigningKey(jwtKey)
+                    .build()
+                    .parseClaimsJws(token);
+
+            Claims claims = jws.getBody();
+            Map<String, Object> res = new HashMap<>();
+            res.put("valid", true);
+            res.put("subject", claims.getSubject());
+            res.put("expiresAt", claims.getExpiration());
+            return ResponseEntity.ok(res);
+        } catch (Exception e) {
+            return error("토큰이 유효하지 않습니다", 401, HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    /**
+     * POST /api/auth/refresh
+     * body: { refreshToken: string }
+     * 유효한 refreshToken으로 accessToken 재발급 (refreshToken 회전)
+     */
+    @PostMapping("/refresh")
+    public ResponseEntity<Map<String, Object>> refresh(@RequestBody Map<String, String> body) {
+        String provided = body != null ? body.get("refreshToken") : null;
+        if (isBlank(provided)) {
+            return error("리프레시 토큰이 없습니다", 400, HttpStatus.BAD_REQUEST);
+        }
+
+        RefreshTokenRecord record = refreshTokenStore.get(provided);
+        if (record == null || record.expiresAt().before(new Date())) {
+            // 만료 또는 존재하지 않음
+            if (record != null) {
+                refreshTokenStore.remove(provided);
+            }
+            return error("리프레시 토큰이 유효하지 않습니다", 401, HttpStatus.UNAUTHORIZED);
+        }
+
+        // access 토큰 재발급
+        Instant now = Instant.now();
+        Date issuedAt = Date.from(now);
+        Date expiry = Date.from(now.plusSeconds(accessTokenTtlSeconds));
+        String subject = record.subject();
+
+        String newAccessToken = Jwts.builder()
+                .setSubject(subject)
+                .setIssuedAt(issuedAt)
+                .setExpiration(expiry)
+                .signWith(jwtKey, SignatureAlgorithm.HS256)
+                .compact();
+
+        // refresh 토큰 회전: 기존 토큰 제거 후 새 토큰 발급
+        refreshTokenStore.remove(provided);
+        String newRefreshToken = generateRefreshToken();
+        Date refreshExpiry = Date.from(now.plusSeconds(refreshTokenTtlSeconds));
+        refreshTokenStore.put(newRefreshToken, new RefreshTokenRecord(subject, refreshExpiry));
+
+        Map<String, Object> res = new HashMap<>();
+        res.put("accessToken", newAccessToken);
+        res.put("refreshToken", newRefreshToken);
+        res.put("success", true);
         return ResponseEntity.ok(res);
     }
 
@@ -118,9 +220,27 @@ public class AuthController {
         res.put("emailAddress", user.get("email_address"));
         res.put("nickName", user.get("nick_name"));
         res.put("createdAt", user.get("created_at") != null ? user.get("created_at").toString() : null);
-        // 개발용 토큰(랜덤 UUID). 실제 운영에서는 JWT 발급으로 대체하세요.
-        res.put("accessToken", UUID.randomUUID().toString());
-        res.put("refreshToken", UUID.randomUUID().toString());
+        // JWT 액세스 토큰 발급
+        Instant now = Instant.now();
+        Date issuedAt = Date.from(now);
+        Date expiry = Date.from(now.plusSeconds(accessTokenTtlSeconds));
+
+        String subject = String.valueOf(user.get("user_id"));
+        String accessToken = Jwts.builder()
+                .setSubject(subject)
+                .setIssuedAt(issuedAt)
+                .setExpiration(expiry)
+                .claim("email", user.get("email_address"))
+                .claim("nickName", user.get("nick_name"))
+                .signWith(jwtKey, SignatureAlgorithm.HS256)
+                .compact();
+
+        res.put("accessToken", accessToken);
+        // 리프레시 토큰 발급 및 저장
+        String refreshToken = generateRefreshToken();
+        Date refreshExpiry = Date.from(now.plusSeconds(refreshTokenTtlSeconds));
+        refreshTokenStore.put(refreshToken, new RefreshTokenRecord(subject, refreshExpiry));
+        res.put("refreshToken", refreshToken);
         return res;
     }
 
@@ -130,4 +250,11 @@ public class AuthController {
         err.put("status", status);
         return ResponseEntity.status(httpStatus).body(err);
     }
+
+    private String generateRefreshToken() {
+        // 간단히 UUID 기반 랜덤 토큰 사용 (실서비스에서는 길고 예측 불가능한 값 권장)
+        return UUID.randomUUID().toString() + UUID.randomUUID();
+    }
+
+    private record RefreshTokenRecord(String subject, Date expiresAt) {}
 }
