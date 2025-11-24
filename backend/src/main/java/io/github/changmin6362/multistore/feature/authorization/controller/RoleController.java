@@ -80,18 +80,19 @@ public class RoleController {
 
     /**
      * PUT /api/rbac/roles/{roleId}
-     * 역할 이름 수정 (없으면 404)
-     * 요청 바디: { "roleName": "ROLE_MANAGER" }
+     * 역할 이름/설명 수정 (없으면 404)
+     * 요청 바디: { "roleName": "ROLE_MANAGER", "roleDescription": "..." }
      */
     @PutMapping("/{roleId}")
     public ResponseEntity<ApiResponse> updateRole(@PathVariable Long roleId,
                                                                        @RequestBody RoleUpdateRequest body) {
         String roleName = body != null ? body.roleName() : null;
+        String roleDescription = body != null ? body.roleDescription() : null;
         if (!StringUtils.hasText(roleName)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(ApiResponse.error(400, "roleName은 필수입니다"));
         }
-        boolean updated = roleService.updateName(roleId, roleName);
+        boolean updated = roleService.updateNameAndDescription(roleId, roleName, roleDescription);
         if (!updated) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(ApiResponse.error(404, "역할 수정에 실패했습니다"));

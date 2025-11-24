@@ -35,10 +35,16 @@ public class RolePermissionRepository {
 
     // 역할별 권한 상세(조인)
     private static final RowMapper<PermissionDto> PERMISSION_MAPPER = (rs, rowNum) ->
-            new PermissionDto(rs.getLong("permission_id"), rs.getString("permission_name"));
+            new PermissionDto(
+                rs.getLong("permission_id"),
+                rs.getString("permission_name"),
+                rs.getString("permission_description"),
+                rs.getString("resource_type"),
+                rs.getString("action_type")
+            );
 
     public List<PermissionDto> findPermissionsByRoleId(Long roleId) {
-        String sql = "SELECT p.permission_id, p.permission_name " +
+        String sql = "SELECT p.permission_id, p.permission_name, p.permission_description, p.resource_type, p.action_type " +
                 "FROM role_permission rp " +
                 "JOIN permission p ON p.permission_id = rp.permission_id " +
                 "WHERE rp.role_id = ?";
@@ -47,7 +53,7 @@ public class RolePermissionRepository {
 
     // 사용자별 권한 상세(조인 체인)
     public List<PermissionDto> findPermissionsByUserId(Long userId) {
-        String sql = "SELECT DISTINCT p.permission_id, p.permission_name " +
+        String sql = "SELECT DISTINCT p.permission_id, p.permission_name, p.permission_description, p.resource_type, p.action_type " +
                 "FROM user_role ur " +
                 "JOIN role_permission rp ON rp.role_id = ur.role_id " +
                 "JOIN permission p ON p.permission_id = rp.permission_id " +

@@ -40,6 +40,10 @@ public class PermissionService {
         return permissionRepository.update(permissionId, permissionName) > 0;
     }
 
+    public boolean updateNameAndDetails(Long permissionId, String permissionName, String resourceType, String actionType, String permissionDescription) {
+        return permissionRepository.updateNameAndDetails(permissionId, permissionName, resourceType, actionType, permissionDescription) > 0;
+    }
+
     public boolean delete(Long permissionId) {
         return permissionRepository.delete(permissionId) > 0;
     }

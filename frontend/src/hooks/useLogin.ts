@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { LoginRequest } from "@/app/api/auth/types";
+import type { LoginRequest } from "@/app/api/.common/types";
 
 interface UseLoginReturn {
   login: (credentials: LoginRequest) => Promise<void>;

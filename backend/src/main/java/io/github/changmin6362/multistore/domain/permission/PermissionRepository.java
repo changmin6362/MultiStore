@@ -21,21 +21,27 @@ public class PermissionRepository {
     }
 
     private static final RowMapper<PermissionDto> PERMISSION_MAPPER = (rs, rowNum) ->
-            new PermissionDto(rs.getLong("permission_id"), rs.getString("permission_name"));
+            new PermissionDto(
+                rs.getLong("permission_id"),
+                rs.getString("permission_name"),
+                rs.getString("permission_description"),
+                rs.getString("resource_type"),
+                rs.getString("action_type")
+            );
 
     public List<PermissionDto> findAll() {
-        String sql = "SELECT permission_id, permission_name FROM permission";
+        String sql = "SELECT permission_id, permission_name, permission_description, resource_type, action_type FROM permission";
         return jdbcTemplate.query(sql, PERMISSION_MAPPER);
     }
 
     public PermissionDto findById(Long permissionId) {
-        String sql = "SELECT permission_id, permission_name FROM permission WHERE permission_id = ?";
+        String sql = "SELECT permission_id, permission_name, permission_description, resource_type, action_type FROM permission WHERE permission_id = ?";
         List<PermissionDto> results = jdbcTemplate.query(sql, PERMISSION_MAPPER, permissionId);
         return results.isEmpty() ? null : results.get(0);
     }
 
     public PermissionDto findByName(String permissionName) {
-        String sql = "SELECT permission_id, permission_name FROM permission WHERE permission_name = ?";
+        String sql = "SELECT permission_id, permission_name, permission_description, resource_type, action_type FROM permission WHERE permission_name = ?";
         List<PermissionDto> results = jdbcTemplate.query(sql, PERMISSION_MAPPER, permissionName);
         return results.isEmpty() ? null : results.get(0);
     }
@@ -55,6 +61,11 @@ public class PermissionRepository {
     public int update(Long permissionId, String permissionName) {
         String sql = "UPDATE permission SET permission_name = ? WHERE permission_id = ?";
         return jdbcTemplate.update(sql, permissionName, permissionId);
+    }
+
+    public int updateNameAndDetails(Long permissionId, String permissionName, String resourceType, String actionType, String permissionDescription) {
+        String sql = "UPDATE permission SET permission_name = ?, resource_type = ?, action_type = ?, permission_description = ?, updated_at = NOW() WHERE permission_id = ?";
+        return jdbcTemplate.update(sql, permissionName, resourceType, actionType, permissionDescription, permissionId);
     }
 
     public int delete(Long permissionId) {

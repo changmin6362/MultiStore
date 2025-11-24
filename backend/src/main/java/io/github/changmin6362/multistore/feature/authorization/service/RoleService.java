@@ -31,6 +31,10 @@ public class RoleService {
         return roleRepository.update(roleId, roleName) > 0;
     }
 
+    public boolean updateNameAndDescription(Long roleId, String roleName, String roleDescription) {
+        return roleRepository.updateNameAndDescription(roleId, roleName, roleDescription) > 0;
+    }
+
     public boolean delete(Long roleId) {
         return roleRepository.delete(roleId) > 0;
     }

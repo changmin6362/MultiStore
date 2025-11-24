@@ -1,48 +1,12 @@
-import type { ApiErrorResponse } from "./types";
+import type { ApiErrorResponse, ApiResult, FetchOptions } from "./types";
 
 const BACKEND_URL =
   process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080";
 
-interface FetchOptions {
-  method: "GET" | "POST" | "PUT" | "DELETE";
-  url: string;
-  body?: unknown;
-}
-
-/**
- * API 응답 결과 타입 (성공 케이스)
- * success: true일 때 data는 T 타입, error는 절대 undefined가 아님
- */
-interface ApiSuccess<T> {
-  success: true;
-  data: T;
-  error: null;
-  status: number;
-}
-
-/**
- * API 응답 결과 타입 (실패 케이스)
- * success: false일 때 data는 null, error는 ApiErrorResponse
- */
-interface ApiFailure {
-  success: false;
-  data: null;
-  error: ApiErrorResponse;
-  status: number;
-}
-
-/**
- * API 응답 결과 타입 (성공 | 실패)
- * success 필드로 타입 좁히기 가능
- */
-type ApiResult<T> = ApiSuccess<T> | ApiFailure;
-
 /**
  * 백엔드 API 요청 처리 유틸
- * 공통 에러 처리 및 타입 안전성 제공
- *
  * @template T - 성공 응답의 데이터 타입
- * @returns ApiResult<T> - data가 있으면 성공, error가 있으면 실패
+ * @returns ApiResult<T> - success가 true면 성공, false면 실패
  */
 export async function fetchBackendApi<T>(
   options: FetchOptions
@@ -66,7 +30,13 @@ export async function fetchBackendApi<T>(
         error:
           response.status === 404
             ? "요청한 리소스를 찾을 수 없습니다"
-            : `요청 실패: ${response.status}`,
+            : response.status === 409
+              ? "이미 존재하거나 충돌하는 요청입니다"
+              : response.status === 400
+                ? "잘못된 요청입니다"
+                : response.status === 401
+                  ? "인증 정보가 올바르지 않습니다"
+                  : `요청 실패: ${response.status}`,
         status: response.status
       };
 
@@ -98,7 +68,7 @@ export async function fetchBackendApi<T>(
 }
 
 /**
- * API 응답 에러 처리 헬퍼
+ * API 에러 응답 처리 헬퍼
  */
 export function handleApiError(
   error: ApiErrorResponse,

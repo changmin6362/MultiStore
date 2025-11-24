@@ -79,17 +79,21 @@ public class PermissionController {
 
     /**
      * PUT /api/rbac/permissions/{permissionId}
-     * 권한 이름 수정 (없으면 404)
+     * 권한 정보 수정 (없으면 404)
+     * 요청 바디: { "permissionName": "...", "resourceType": "...", "actionType": "...", "permissionDescription": "..." }
      */
     @PutMapping("/{permissionId}")
     public ResponseEntity<ApiResponse> updatePermission(@PathVariable Long permissionId,
                                                                              @RequestBody PermissionUpdateRequest body) {
         String permissionName = body != null ? body.permissionName() : null;
-        if (!StringUtils.hasText(permissionName)) {
+        String resourceType = body != null ? body.resourceType() : null;
+        String actionType = body != null ? body.actionType() : null;
+        String description = body != null ? body.permissionDescription() : null;
+        if (!StringUtils.hasText(permissionName) || !StringUtils.hasText(resourceType) || !StringUtils.hasText(actionType)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(ApiResponse.error(400, "permissionName은 필수입니다"));
+                    .body(ApiResponse.error(400, "permissionName, resourceType, actionType은 필수입니다"));
         }
-        boolean updated = permissionService.updateName(permissionId, permissionName);
+        boolean updated = permissionService.updateNameAndDetails(permissionId, permissionName, resourceType, actionType, description);
         if (!updated) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(ApiResponse.error(404, "권한 수정에 실패했습니다"));

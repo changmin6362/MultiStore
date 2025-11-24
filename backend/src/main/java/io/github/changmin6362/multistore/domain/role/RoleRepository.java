@@ -56,6 +56,11 @@ public class RoleRepository {
         return jdbcTemplate.update(sql, roleName, roleId);
     }
 
+    public int updateNameAndDescription(Long roleId, String roleName, String roleDescription) {
+        String sql = "UPDATE role SET role_name = ?, role_description = ?, updated_at = NOW() WHERE role_id = ?";
+        return jdbcTemplate.update(sql, roleName, roleDescription, roleId);
+    }
+
     public int delete(Long roleId) {
         String sql = "DELETE FROM role WHERE role_id = ?";
         return jdbcTemplate.update(sql, roleId);
