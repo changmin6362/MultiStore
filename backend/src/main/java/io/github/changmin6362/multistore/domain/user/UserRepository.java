@@ -1,6 +1,5 @@
-package io.github.changmin6362.multistore.repository;
+package io.github.changmin6362.multistore.domain.user;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -10,8 +9,11 @@ import java.util.Map;
 @Repository
 public class UserRepository {
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
+
+    public UserRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     public List<Map<String, Object>> findAll() {
         String sql = "SELECT user_id, email_address, nick_name, created_at, updated_at, deleted_at FROM user WHERE deleted_at IS NULL";

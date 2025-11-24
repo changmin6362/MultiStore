@@ -1,15 +1,15 @@
 import type { RawUser, UserResponse } from "./types";
 
 /**
- * snake_case를 camelCase로 변환
+ * camelCase 데이터를 UserResponse 형태로 변환
  */
 export const convertUser = (raw: RawUser): UserResponse => ({
-  userId: raw.user_id,
-  emailAddress: raw.email_address,
-  nickName: raw.nick_name,
-  createdAt: raw.created_at,
-  updatedAt: raw.updated_at,
-  deletedAt: raw.deleted_at
+  userId: raw.userId,
+  emailAddress: raw.emailAddress,
+  nickName: raw.nickName,
+  createdAt: raw.createdAt,
+  updatedAt: raw.updatedAt || raw.createdAt,
+  deletedAt: raw.deletedAt || null
 });
 
 /**
