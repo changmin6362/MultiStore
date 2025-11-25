@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import type { UserResponse, RawUser } from "../types";
+import type { UserResponse, UsersApiResponse } from "../types";
 import { convertUser } from "../utils";
 
 export const useUsersFetch = () => {
@@ -13,16 +13,14 @@ export const useUsersFetch = () => {
         setLoading(true);
         setError(null);
         const response = await fetch("/api/user");
-        const data = await response.json();
+        const data: UsersApiResponse = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.message || "사용자 목록 조회 실패");
+          throw new Error("사용자 목록 조회 실패");
         }
 
-        // 백엔드가 배열로 직접 반환하는 경우와 { data: [] }로 반환하는 경우 모두 처리
-        const userList = Array.isArray(data)
-          ? data
-          : (data.data as RawUser[]) || [];
+        // 백엔드 응답 구조: { success: true, users: [...] }
+        const userList = data.users || [];
         const convertedUsers = userList.map(convertUser);
 
         setUsers(convertedUsers);

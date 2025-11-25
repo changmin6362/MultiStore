@@ -1,5 +1,5 @@
-import type { UserListResponse, UserResponse } from "./types";
-import { fetchBackendApi, handleApiError } from "./utils";
+import type { UserListResponse, UserResponse } from "@/app/api/.common/types";
+import { fetchBackendApi, handleApiError } from "@/app/api/.common/utils";
 
 /**
  * GET /api/user

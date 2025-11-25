@@ -1,5 +1,5 @@
-import type { UserResponse } from "../types";
-import { fetchBackendApi, handleApiError } from "../utils";
+import type { UserResponse } from "@/app/api/.common/types";
+import { fetchBackendApi, handleApiError } from "@/app/api/.common/utils";
 
 /**
  * GET /api/user/[userId]
@@ -9,9 +9,9 @@ import { fetchBackendApi, handleApiError } from "../utils";
  */
 export async function GET(
   request: Request,
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
-  const { userId } = params;
+  const { userId } = await params;
 
   const result = await fetchBackendApi<UserResponse>({
     method: "GET",
@@ -34,10 +34,10 @@ export async function GET(
  */
 export async function PUT(
   request: Request,
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
-    const { userId } = params;
+    const { userId } = await params;
     const body = await request.json();
 
     const result = await fetchBackendApi<UserResponse>({
@@ -70,9 +70,9 @@ export async function PUT(
  */
 export async function DELETE(
   request: Request,
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
-  const { userId } = params;
+  const { userId } = await params;
 
   const result = await fetchBackendApi<void>({
     method: "DELETE",

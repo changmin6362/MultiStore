@@ -59,7 +59,7 @@ API Swagger 링크
 ### Backend
 - **Language** : Java
 - **Framework** : Spring Boot
-- **Library** : JDBCTemplate
+- **Library** : JdbcTemplate, lombok
 - **Deployment** : 미정. 아마 AWS(EC2, RES)
 
 ***

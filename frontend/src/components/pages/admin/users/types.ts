@@ -1,10 +1,10 @@
 export interface RawUser {
-  user_id: number;
-  email_address: string;
-  nick_name: string;
-  created_at: string;
-  updated_at: string;
-  deleted_at: string | null;
+  userId: number;
+  emailAddress: string;
+  nickName: string;
+  createdAt: string;
+  updatedAt?: string;
+  deletedAt?: string | null;
 }
 
 export interface UserResponse {
@@ -14,4 +14,9 @@ export interface UserResponse {
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
+}
+
+export interface UsersApiResponse {
+  success: boolean;
+  users: RawUser[];
 }

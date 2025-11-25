@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { SignupRequest, AuthResponse } from "@/app/api/auth/types";
+import type { SignupRequest, AuthResponse } from "@/app/api/.common/types";
 
 interface UseSignupReturn {
   signup: (data: SignupRequest) => Promise<void>;

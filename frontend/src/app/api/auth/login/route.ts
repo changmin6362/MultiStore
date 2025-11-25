@@ -1,5 +1,8 @@
-import type { LoginRequest, AuthResponse } from "../types";
-import { fetchAuthApi, handleAuthError } from "../utils";
+import type { LoginRequest, AuthResponse } from "@/app/api/.common/types";
+import {
+  fetchBackendApi as fetchAuthApi,
+  handleApiError as handleAuthError
+} from "@/app/api/.common/utils";
 import { NextResponse } from "next/server";
 
 /**
