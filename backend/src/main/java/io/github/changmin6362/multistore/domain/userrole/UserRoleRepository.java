@@ -33,11 +33,12 @@ public class UserRoleRepository {
     }
 
     private static final RowMapper<RoleDto> ROLE_MAPPER = (rs, rowNum) ->
-            new RoleDto(rs.getLong("role_id"), rs.getString("role_name"));
+            new RoleDto(rs.getLong("role_id"), rs.getString("role_name"), rs.getString("role_description"));
 
     // 사용자별 역할 상세(조인)
     public List<RoleDto> findRolesByUserId(Long userId) {
-        String sql = "SELECT r.role_id, r.role_name " +
+        // ROLE_MAPPER expects role_id, role_name, role_description
+        String sql = "SELECT r.role_id, r.role_name, r.role_description " +
                 "FROM user_role ur " +
                 "JOIN role r ON r.role_id = ur.role_id " +
                 "WHERE ur.user_id = ?";

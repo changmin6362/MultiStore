@@ -60,9 +60,9 @@ export const RolesTable = ({
                     <p className="text-sm font-semibold text-gray-900">
                       {role.roleName}
                     </p>
-                    {role.description && (
+                    {role.roleDescription && (
                       <p className="mt-1 text-xs text-gray-600">
-                        {role.description}
+                        {role.roleDescription}
                       </p>
                     )}
                   </div>

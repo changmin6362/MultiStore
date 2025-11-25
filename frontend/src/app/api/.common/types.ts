@@ -121,7 +121,7 @@ export interface UserListResponse {
 export interface RoleDto {
   roleId: number;
   roleName: string;
-  description: string;
+  roleDescription: string;
 }
 
 /**

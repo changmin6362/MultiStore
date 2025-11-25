@@ -21,21 +21,22 @@ public class RoleRepository {
     }
 
     private static final RowMapper<RoleDto> ROLE_MAPPER = (rs, rowNum) ->
-            new RoleDto(rs.getLong("role_id"), rs.getString("role_name"));
+            new RoleDto(rs.getLong("role_id"), rs.getString("role_name"), rs.getString("role_description"));
 
     public List<RoleDto> findAll() {
-        String sql = "SELECT role_id, role_name FROM role";
+        String sql = "SELECT role_id, role_name, role_description FROM role";
         return jdbcTemplate.query(sql, ROLE_MAPPER);
     }
 
     public RoleDto findById(Long roleId) {
-        String sql = "SELECT role_id, role_name FROM role WHERE role_id = ?";
+        String sql = "SELECT role_id, role_name, role_description FROM role WHERE role_id = ?";
         List<RoleDto> results = jdbcTemplate.query(sql, ROLE_MAPPER, roleId);
         return results.isEmpty() ? null : results.get(0);
     }
 
     public RoleDto findByName(String roleName) {
-        String sql = "SELECT role_id, role_name FROM role WHERE role_name = ?";
+        // ROLE_MAPPER expects role_id, role_name, role_description
+        String sql = "SELECT role_id, role_name, role_description FROM role WHERE role_name = ?";
         List<RoleDto> results = jdbcTemplate.query(sql, ROLE_MAPPER, roleName);
         return results.isEmpty() ? null : results.get(0);
     }
