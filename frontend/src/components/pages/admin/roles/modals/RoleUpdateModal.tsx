@@ -26,7 +26,7 @@ export const RoleUpdateModal = ({
   useEffect(() => {
     if (role) {
       setRoleName(role.roleName || "");
-      setRoleDescription(role.description || "");
+      setRoleDescription(role.roleDescription || "");
       setError("");
     }
   }, [role]);

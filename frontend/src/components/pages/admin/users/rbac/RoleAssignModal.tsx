@@ -40,7 +40,10 @@ export const RoleAssignModal = ({
         });
         if (!res.ok) {
           const text = await res.text();
-          throw new Error(`역할 조회 실패 (${res.status}): ${text}`);
+          // 로컬에서 throw 후 곧바로 catch 되는 패턴을 제거하고, 상태로 처리
+          setError(`역할 조회 실패 (${res.status}): ${text}`);
+          setAvailableRoles([]);
+          return; // 초기 로딩 종료는 finally에서 처리
         }
         const data = await res.json();
         // 기대 응답: { success: true, roles: [{ roleId, roleName, ... }] }
@@ -53,7 +56,8 @@ export const RoleAssignModal = ({
           }) => ({
             roleId: Number(r.roleId),
             roleName: String(r.roleName),
-            description: r.roleDescription ?? r.description ?? ""
+            // UI와 공통 타입(RoleDto)의 스키마에 맞게 roleDescription으로 매핑
+            roleDescription: r.roleDescription ?? r.description ?? ""
           })
         );
         setAvailableRoles(roles);
@@ -66,7 +70,8 @@ export const RoleAssignModal = ({
       }
     };
 
-    fetchRoles();
+    // 반환된 프로미스를 명시적으로 무시하여 린트 경고 해소
+    void fetchRoles();
   }, [isOpen]);
 
   const handleAssign = async (roleId: number) => {
@@ -110,9 +115,9 @@ export const RoleAssignModal = ({
                 className="w-full rounded-lg border border-gray-200 p-3 text-left hover:bg-gray-50 disabled:opacity-50"
               >
                 <div className="font-semibold">{role.roleName}</div>
-                {role.description && (
+                {role.roleDescription && (
                   <div className="text-sm text-gray-500">
-                    {role.description}
+                    {role.roleDescription}
                   </div>
                 )}
               </button>

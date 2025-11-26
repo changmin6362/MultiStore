@@ -67,4 +67,31 @@ public class RolePermissionRepository {
         Long count = jdbcTemplate.queryForObject(sql, Long.class, roleId, permissionId);
         return count != null && count > 0L;
     }
+
+    /**
+     * 사용자가 특정 권한명(permission_name)을 보유하는지 여부 확인
+     * user_role → role_permission → permission 조인 후 COUNT 체크
+     */
+    public boolean userHasPermissionByName(Long userId, String permissionName) {
+        String sql = "SELECT COUNT(1) " +
+                "FROM user_role ur " +
+                "JOIN role_permission rp ON rp.role_id = ur.role_id " +
+                "JOIN permission p ON p.permission_id = rp.permission_id " +
+                "WHERE ur.user_id = ? AND p.permission_name = ?";
+        Long count = jdbcTemplate.queryForObject(sql, Long.class, userId, permissionName);
+        return count != null && count > 0L;
+    }
+
+    /**
+     * 사용자가 특정 리소스/액션 조합 권한을 보유하는지 여부 확인
+     */
+    public boolean userHasPermissionByResourceAction(Long userId, String resourceType, String actionType) {
+        String sql = "SELECT COUNT(1) " +
+                "FROM user_role ur " +
+                "JOIN role_permission rp ON rp.role_id = ur.role_id " +
+                "JOIN permission p ON p.permission_id = rp.permission_id " +
+                "WHERE ur.user_id = ? AND p.resource_type = ? AND p.action_type = ?";
+        Long count = jdbcTemplate.queryForObject(sql, Long.class, userId, resourceType, actionType);
+        return count != null && count > 0L;
+    }
 }
