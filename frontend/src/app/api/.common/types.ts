@@ -202,3 +202,10 @@ export interface PermissionResponse {
   permission?: PermissionDto;
   data?: PermissionDto;
 }
+
+/**
+ * 권한 확인 응답
+ */
+export interface AllowedResponse {
+  allowed: boolean;
+}

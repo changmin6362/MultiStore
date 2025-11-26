@@ -19,7 +19,7 @@ export const RoleTag = ({
           onClick={() => onRemove(role.roleId)}
           disabled={isRemoving}
           className="ml-2 hover:text-blue-900 disabled:opacity-50"
-          title={role.description}
+          title={role.roleDescription}
         >
           ✕
         </button>

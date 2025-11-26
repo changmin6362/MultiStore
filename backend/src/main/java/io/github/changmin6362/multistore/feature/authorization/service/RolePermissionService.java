@@ -34,4 +34,12 @@ public class RolePermissionService {
     public boolean removePermissionFromRole(Long roleId, Long permissionId) {
         return rolePermissionRepository.removePermissionFromRole(roleId, permissionId) > 0;
     }
+
+    public boolean userHasPermissionByName(Long userId, String permissionName) {
+        return rolePermissionRepository.userHasPermissionByName(userId, permissionName);
+    }
+
+    public boolean userHasPermissionByResourceAction(Long userId, String resourceType, String actionType) {
+        return rolePermissionRepository.userHasPermissionByResourceAction(userId, resourceType, actionType);
+    }
 }

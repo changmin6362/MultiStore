@@ -10,6 +10,7 @@ import io.github.changmin6362.multistore.feature.authorization.web.request.Assig
 import io.github.changmin6362.multistore.feature.authorization.service.UserRoleService;
 import io.github.changmin6362.multistore.common.web.flags.AssignedResponse;
 import io.github.changmin6362.multistore.common.web.flags.RemovedResponse;
+import io.github.changmin6362.multistore.common.web.flags.AllowedResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -91,5 +92,33 @@ public class UserRoleController {
     public ResponseEntity<ApiResponse> getUserPermissions(@PathVariable Long userId) {
         List<PermissionDto> permissions = rolePermissionService.findPermissionsByUserId(userId);
         return ResponseEntity.ok(ApiResponse.ok(new PermissionsResponse(permissions)));
+    }
+
+    /**
+     * GET /api/rbac/users/{userId}/permissions/check
+     * 사용자가 특정 권한을 보유하는지 여부 확인
+     * - 쿼리 파라미터로 둘 중 하나 방식으로 확인
+     *   1) permissionName=...
+     *   2) resourceType=... & actionType=...
+     * 응답: { success: true, allowed: boolean }
+     */
+    @GetMapping("/{userId}/permissions/check")
+    public ResponseEntity<ApiResponse> checkUserPermission(
+            @PathVariable Long userId,
+            @RequestParam(required = false) String permissionName,
+            @RequestParam(required = false) String resourceType,
+            @RequestParam(required = false) String actionType
+    ) {
+        boolean allowed;
+        if (permissionName != null && !permissionName.isBlank()) {
+            allowed = rolePermissionService.userHasPermissionByName(userId, permissionName);
+        } else if (resourceType != null && !resourceType.isBlank() && actionType != null && !actionType.isBlank()) {
+            allowed = rolePermissionService.userHasPermissionByResourceAction(userId, resourceType, actionType);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(ApiResponse.error(400, "permissionName 또는 resourceType+actionType 중 하나를 제공해야 합니다"));
+        }
+
+        return ResponseEntity.ok(ApiResponse.ok(new AllowedResponse(allowed)));
     }
 }
