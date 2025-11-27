@@ -3,8 +3,7 @@ package io.github.changmin6362.multistore.feature.user.controller;
 import io.github.changmin6362.multistore.common.web.ApiResponse;
 import io.github.changmin6362.multistore.common.web.flags.DeletedResponse;
 import io.github.changmin6362.multistore.feature.user.web.request.UpdateUserRequest;
-import io.github.changmin6362.multistore.domain.user.dto.UserDto;
-import io.github.changmin6362.multistore.feature.user.web.response.UserResponse;
+import io.github.changmin6362.multistore.feature.common.response.UserResponse;
 import io.github.changmin6362.multistore.feature.user.web.response.UsersResponse;
 import io.github.changmin6362.multistore.feature.user.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -31,7 +30,7 @@ public class UserController {
      */
     @GetMapping
     public ResponseEntity<ApiResponse> getAllUsers() {
-        List<UserDto> users = userService.findAll();
+        List<UserResponse> users = userService.findAll();
         return ResponseEntity.ok(ApiResponse.ok(new UsersResponse(users)));
     }
 
@@ -41,12 +40,12 @@ public class UserController {
      */
     @GetMapping("/{userId}")
     public ResponseEntity<ApiResponse> getUserById(@PathVariable Long userId) {
-        UserDto user = userService.findById(userId);
+        UserResponse user = userService.findById(userId);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(ApiResponse.error(404, "사용자를 찾을 수 없습니다"));
         }
-        return ResponseEntity.ok(ApiResponse.ok(new UserResponse(user)));
+        return ResponseEntity.ok(ApiResponse.ok(new io.github.changmin6362.multistore.feature.user.web.response.UserResponse(user)));
     }
 
     /**
@@ -68,8 +67,8 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(ApiResponse.error(404, "수정할 사용자를 찾을 수 없습니다"));
         }
-        UserDto user = userService.findById(userId);
-        return ResponseEntity.ok(ApiResponse.ok(new UserResponse(user)));
+        UserResponse user = userService.findById(userId);
+        return ResponseEntity.ok(ApiResponse.ok(new io.github.changmin6362.multistore.feature.user.web.response.UserResponse(user)));
     }
 
     /**
