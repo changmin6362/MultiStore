@@ -46,8 +46,8 @@ export const RoleAssignModal = ({
           return; // 초기 로딩 종료는 finally에서 처리
         }
         const data = await res.json();
-        // 기대 응답: { success: true, roles: [{ roleId, roleName, ... }] }
-        const roles: RoleDto[] = (data?.roles || []).map(
+        // 새 응답 형식: { success: true, data: [{ roleId, roleName, ... }] }
+        const roles: RoleDto[] = (data?.data || []).map(
           (r: {
             roleId: number;
             roleName: string;

@@ -4,7 +4,7 @@ import java.math.BigInteger;
 import java.sql.Timestamp;
 
 /**
- * User 테이블의 개별 행을 표현하는 레코드
+ * User 테이블의 개별 행을 표현하는 Record
  *
  * @param userId
  * @param emailAddress

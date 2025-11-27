@@ -29,7 +29,10 @@ export const useRoles = (): UseRolesReturn => {
         throw new Error(result.error.message || result.error.error);
       }
 
-      setRoles(result.data.roles || []);
+      // result.data는 백엔드 응답 { success: true, data: RoleDto[] }
+      // 따라서 (result.data as RolesResponse).data에 실제 배열이 있음
+      const rolesData = (result.data as RolesResponse).data || [];
+      setRoles(Array.isArray(rolesData) ? rolesData : []);
     } catch (err) {
       setError(err instanceof Error ? err.message : "역할 조회 실패");
     } finally {

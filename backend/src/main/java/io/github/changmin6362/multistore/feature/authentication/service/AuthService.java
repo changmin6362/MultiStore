@@ -1,5 +1,6 @@
 package io.github.changmin6362.multistore.feature.authentication.service;
 
+import io.github.changmin6362.multistore.domain.user.UserEntity;
 import io.github.changmin6362.multistore.domain.user.UserRepository;
 import io.github.changmin6362.multistore.feature.authentication.api.AuthResponse;
 import io.github.changmin6362.multistore.feature.authentication.api.TokenPairResponse;
@@ -42,8 +43,8 @@ public class AuthService {
     }
 
     public AuthResponse signup(String emailAddress, String password, String nickName) {
-        // 응답 전용 DTO로 중복 체크
-        UserResponse existingUser = userRepository.findResponseByEmail(emailAddress);
+        // 사용자 존재 여부 확인 (엔티티 조회 후 서비스에서 매핑)
+        UserEntity existingUser = userRepository.findByEmail(emailAddress);
         if (existingUser != null) {
             return null; // 컨트롤러에서 409 처리
         }
@@ -52,7 +53,8 @@ public class AuthService {
         if (!saved) {
             return null; // 필요시 예외 변환
         }
-        UserResponse user = userRepository.findResponseByEmail(emailAddress);
+        UserEntity e = userRepository.findByEmail(emailAddress);
+        UserResponse user = e == null ? null : toResponse(e);
         return user == null ? null : buildAuthResponse(user);
     }
 
@@ -64,7 +66,8 @@ public class AuthService {
         String providedHash = hashPassword(password);
         if (!storedHash.equals(providedHash)) return null;
 
-        UserResponse user = userRepository.findResponseByEmail(emailAddress);
+        UserEntity e = userRepository.findByEmail(emailAddress);
+        UserResponse user = e == null ? null : toResponse(e);
         if (user == null) return null;
         return buildAuthResponse(user);
     }
@@ -164,4 +167,11 @@ public class AuthService {
     }
 
     private record RefreshTokenRecord(String subject, Date expiresAt) {}
+
+    private UserResponse toResponse(UserEntity e) {
+        if (e == null) return null;
+        Long id = e.userId() == null ? null : e.userId().longValue();
+        String created = e.createdAt() == null ? null : e.createdAt().toString();
+        return new UserResponse(id, e.emailAddress(), e.nickName(), created);
+    }
 }

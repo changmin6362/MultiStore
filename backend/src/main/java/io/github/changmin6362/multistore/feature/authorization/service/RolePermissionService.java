@@ -1,7 +1,7 @@
 package io.github.changmin6362.multistore.feature.authorization.service;
 
-import io.github.changmin6362.multistore.feature.authorization.web.response.PermissionResponse;
 import io.github.changmin6362.multistore.domain.rolepermission.RolePermissionRepository;
+import io.github.changmin6362.multistore.feature.authorization.web.response.PermissionResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -52,8 +52,8 @@ public class RolePermissionService {
             Object idObj = e.getClass().getMethod("permissionId").invoke(e);
             Object nameObj = e.getClass().getMethod("permissionName").invoke(e);
             Object descObj = e.getClass().getMethod("permissionDescription").invoke(e);
-            Object resTypeObj = e.getClass().getMethod("resource_type").invoke(e);
-            Object actTypeObj = e.getClass().getMethod("action_type").invoke(e);
+            Object resTypeObj = e.getClass().getMethod("resourceType").invoke(e);
+            Object actTypeObj = e.getClass().getMethod("actionType").invoke(e);
 
             Long id = null;
             if (idObj instanceof Number n) id = n.longValue();

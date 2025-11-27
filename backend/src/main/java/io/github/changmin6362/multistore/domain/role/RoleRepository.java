@@ -1,6 +1,5 @@
 package io.github.changmin6362.multistore.domain.role;
 
-import io.github.changmin6362.multistore.domain.role.dto.RoleDto;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -8,36 +7,43 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * 인가(RDBC) - 역할(Role) 테이블 전용 Repository
- * 주의: UserRepository는 인증을 담당하고, 이 레포지토리는 인가만 담당합니다.
+ * Role 도메인 엔티티에 대한 데이터 접근을 담당하는 Repository
  */
 @Repository
 public class RoleRepository {
 
+    /**
+     * ResultSet을 RoleEntity으로 매핑하는 구현체
+     */
+    private static final RowMapper<RoleEntity> ROLE_MAPPER = (rs, rowNum) ->
+            new RoleEntity(
+                    rs.getInt("role_id"),
+                    rs.getString("role_name"),
+                    rs.getString("role_description"),
+                    rs.getTimestamp("created_at"),
+                    rs.getTimestamp("updated_at")
+            );
     private final JdbcTemplate jdbcTemplate;
 
     public RoleRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    private static final RowMapper<RoleDto> ROLE_MAPPER = (rs, rowNum) ->
-            new RoleDto(rs.getLong("role_id"), rs.getString("role_name"), rs.getString("role_description"));
-
-    public List<RoleDto> findAll() {
-        String sql = "SELECT role_id, role_name, role_description FROM role";
+    public List<RoleEntity> findAll() {
+        String sql = "SELECT role_id, role_name, role_description, created_at, updated_at FROM role";
         return jdbcTemplate.query(sql, ROLE_MAPPER);
     }
 
-    public RoleDto findById(Long roleId) {
-        String sql = "SELECT role_id, role_name, role_description FROM role WHERE role_id = ?";
-        List<RoleDto> results = jdbcTemplate.query(sql, ROLE_MAPPER, roleId);
+    public RoleEntity findById(Long roleId) {
+        String sql = "SELECT role_id, role_name, role_description, created_at, updated_at FROM role WHERE role_id = ?";
+        List<RoleEntity> results = jdbcTemplate.query(sql, ROLE_MAPPER, roleId);
         return results.isEmpty() ? null : results.get(0);
     }
 
-    public RoleDto findByName(String roleName) {
+    public RoleEntity findByName(String roleName) {
         // ROLE_MAPPER expects role_id, role_name, role_description
-        String sql = "SELECT role_id, role_name, role_description FROM role WHERE role_name = ?";
-        List<RoleDto> results = jdbcTemplate.query(sql, ROLE_MAPPER, roleName);
+        String sql = "SELECT role_id, role_name, role_description, created_at, updated_at FROM role WHERE role_name = ?";
+        List<RoleEntity> results = jdbcTemplate.query(sql, ROLE_MAPPER, roleName);
         return results.isEmpty() ? null : results.get(0);
     }
 

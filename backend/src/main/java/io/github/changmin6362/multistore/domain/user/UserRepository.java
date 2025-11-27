@@ -1,6 +1,4 @@
 package io.github.changmin6362.multistore.domain.user;
-
-import io.github.changmin6362.multistore.feature.common.response.UserResponse;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -10,23 +8,24 @@ import java.math.BigInteger;
 import java.util.List;
 
 /**
- * User Entity에 대한 DB 연산을 수행하는 Repository Class; JdbcTemplate 사용
+ * User Entity 도메인 엔티티에 대한 데이터 접근을 담당하는 Repository
  */
 @Repository
 public class UserRepository {
 
     /**
-     * User Entity에 대한 RowMapper
+     * ResultSet을 UserEntity으로 매핑하는 구현체
      */
-    private static final RowMapper<UserEntity> USER_ENTITY_MAPPER = (rs, rowNum) -> new UserEntity(
-            toBigInteger(rs.getObject("user_id")),
-            rs.getString("email_address"),
-            rs.getString("password_hash"),
-            rs.getString("nick_name"),
-            rs.getTimestamp("created_at"),
-            rs.getTimestamp("updated_at"),
-            rs.getTimestamp("deleted_at")
-    );
+    private static final RowMapper<UserEntity> USER_ENTITY_MAPPER = (rs, rowNum) ->
+            new UserEntity(
+                    toBigInteger(rs.getObject("user_id")),
+                    rs.getString("email_address"),
+                    rs.getString("password_hash"),
+                    rs.getString("nick_name"),
+                    rs.getTimestamp("created_at"),
+                    rs.getTimestamp("updated_at"),
+                    rs.getTimestamp("deleted_at")
+            );
 
 
     private final JdbcTemplate jdbcTemplate;
@@ -42,16 +41,7 @@ public class UserRepository {
         return new BigInteger(v.toString());
     }
 
-    private static UserResponse toResponse(UserEntity e) {
-        if (e == null) return null;
-        Long id = toLong(e.userId());
-        String created = e.createdAt() == null ? null : e.createdAt().toString();
-        return new UserResponse(id, e.emailAddress(), e.nickName(), created);
-    }
-
-    private static Long toLong(BigInteger v) {
-        return v == null ? null : v.longValue();
-    }
+    // DTO 변환은 서비스 계층 책임입니다. (DDD 경계 준수)
 
     /**
      * 모든 사용자 정보 조회 (삭제된 사용자 제외)
@@ -126,8 +116,6 @@ public class UserRepository {
         return results.isEmpty() ? null : results.get(0);
     }
 
-    // 아래부터는 서비스/컨트롤러 레이어에 UserEntity 노출을 피하기 위한 응답 전용 메서드들
-
     /**
      * 사용자의 정보 갱신
      *
@@ -150,20 +138,6 @@ public class UserRepository {
     public boolean delete(Long userId) {
         String sql = "UPDATE user SET deleted_at = NOW() WHERE user_id = ?";
         return jdbcTemplate.update(sql, userId) > 0;
-    }
-
-    public List<UserResponse> findAllResponses() {
-        return findAll().stream().map(UserRepository::toResponse).toList();
-    }
-
-    public UserResponse findResponseById(Long userId) {
-        UserEntity e = findById(userId);
-        return e == null ? null : toResponse(e);
-    }
-
-    public UserResponse findResponseByEmail(String emailAddress) {
-        UserEntity e = findByEmail(emailAddress);
-        return e == null ? null : toResponse(e);
     }
 
     /**

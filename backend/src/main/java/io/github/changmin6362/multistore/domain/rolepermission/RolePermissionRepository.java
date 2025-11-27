@@ -8,13 +8,14 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * 인가(RDBC) - 역할-권한 매핑(role_permission) 테이블 전용 Repository
- * 인증은 UserRepository, 인가는 본 레포지토리에서 담당합니다.
+ * RolePermission 도메인 엔티티에 대한 데이터 접근을 담당하는 Repository
  */
 @Repository
 public class RolePermissionRepository {
 
-    // 역할별 권한 상세(조인)
+    /**
+     * ResultSet을 PermissionEntity으로 매핑하는 구현체
+     */
     private static final RowMapper<PermissionEntity> PERMISSION_MAPPER = (rs, rowNum) ->
             new PermissionEntity(
                     rs.getInt("permission_id"),
@@ -24,6 +25,15 @@ public class RolePermissionRepository {
                     rs.getString("action_type"),
                     rs.getTimestamp("created_at"),
                     rs.getTimestamp("updated_at")
+            );
+
+    /**
+     * ResultSet을 RolePermissionEntity으로 매핑하는 구현체
+     */
+    private static final RowMapper<RolePermissionEntity> ROLE_PERMISSION_MAPPER = (rs, rowNum) ->
+            new RolePermissionEntity(
+                    rs.getInt("role_id"),
+                    rs.getInt("permission_id")
             );
     private final JdbcTemplate jdbcTemplate;
 
@@ -43,8 +53,24 @@ public class RolePermissionRepository {
         return jdbcTemplate.update(sql, roleId, permissionId);
     }
 
+    /**
+     * 특정 역할에 매핑된 role_permissions 행들을 엔티티로 조회
+     */
+    public List<RolePermissionEntity> findAllByRoleId(Long roleId) {
+        String sql = "SELECT role_id, permission_id FROM role_permission WHERE role_id = ?";
+        return jdbcTemplate.query(sql, ROLE_PERMISSION_MAPPER, roleId);
+    }
+
+    /**
+     * 특정 권한에 매핑된 role_permissions 행들을 엔티티로 조회
+     */
+    public List<RolePermissionEntity> findAllByPermissionId(Long permissionId) {
+        String sql = "SELECT role_id, permission_id FROM role_permission WHERE permission_id = ?";
+        return jdbcTemplate.query(sql, ROLE_PERMISSION_MAPPER, permissionId);
+    }
+
     public List<PermissionEntity> findPermissionsByRoleId(Long roleId) {
-        String sql = "SELECT p.permission_id, p.permission_name, p.permission_description, p.resource_type, p.action_type " +
+        String sql = "SELECT p.permission_id, p.permission_name, p.permission_description, p.resource_type, p.action_type, p.created_at, p.updated_at " +
                 "FROM role_permission rp " +
                 "JOIN permission p ON p.permission_id = rp.permission_id " +
                 "WHERE rp.role_id = ?";
@@ -70,7 +96,7 @@ public class RolePermissionRepository {
 
     /**
      * 사용자가 특정 권한명(permission_name)을 보유하는지 여부 확인
-     * user_role → role_permission → permission 조인 후 COUNT 체크
+     * user_roles → role_permissions → permissions 조인 후 COUNT 체크
      */
     public boolean userHasPermissionByName(Long userId, String permissionName) {
         String sql = "SELECT COUNT(1) " +

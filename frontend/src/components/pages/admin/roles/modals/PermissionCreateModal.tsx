@@ -46,11 +46,13 @@ export const PermissionCreateModal = ({
       actionType,
       permissionDescription
     );
-    if (result) {
+
+    if (result !== null) {
       // 성공 시 모달 닫기 (상태 초기화는 handleClose에서)
       await onSuccess();
       handleClose();
     } else {
+      // 실패 시 훅의 error 상태 확인
       setFormError(error || "권한 생성 실패");
     }
   };

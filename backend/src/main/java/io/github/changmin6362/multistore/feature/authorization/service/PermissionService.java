@@ -59,8 +59,8 @@ public class PermissionService {
             Object idObj = e.getClass().getMethod("permissionId").invoke(e);
             Object nameObj = e.getClass().getMethod("permissionName").invoke(e);
             Object descObj = e.getClass().getMethod("permissionDescription").invoke(e);
-            Object resTypeObj = e.getClass().getMethod("resource_type").invoke(e);
-            Object actTypeObj = e.getClass().getMethod("action_type").invoke(e);
+            Object resTypeObj = e.getClass().getMethod("resourceType").invoke(e);
+            Object actTypeObj = e.getClass().getMethod("actionType").invoke(e);
 
             Long id = null;
             if (idObj instanceof Number n) id = n.longValue();

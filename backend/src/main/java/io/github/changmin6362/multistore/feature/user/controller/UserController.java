@@ -4,7 +4,6 @@ import io.github.changmin6362.multistore.common.web.ApiResponse;
 import io.github.changmin6362.multistore.common.web.flags.DeletedResponse;
 import io.github.changmin6362.multistore.feature.user.web.request.UpdateUserRequest;
 import io.github.changmin6362.multistore.feature.common.response.UserResponse;
-import io.github.changmin6362.multistore.feature.user.web.response.UsersResponse;
 import io.github.changmin6362.multistore.feature.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +30,8 @@ public class UserController {
     @GetMapping
     public ResponseEntity<ApiResponse> getAllUsers() {
         List<UserResponse> users = userService.findAll();
-        return ResponseEntity.ok(ApiResponse.ok(new UsersResponse(users)));
+        // 컨트롤러 전용 래퍼 제거: 공용 UserResponse 리스트를 직접 반환
+        return ResponseEntity.ok(ApiResponse.ok(users));
     }
 
     /**
@@ -45,7 +45,8 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(ApiResponse.error(404, "사용자를 찾을 수 없습니다"));
         }
-        return ResponseEntity.ok(ApiResponse.ok(new io.github.changmin6362.multistore.feature.user.web.response.UserResponse(user)));
+        // 컨트롤러 전용 래퍼 제거: 공용 UserResponse를 직접 반환
+        return ResponseEntity.ok(ApiResponse.ok(user));
     }
 
     /**
@@ -68,7 +69,8 @@ public class UserController {
                     .body(ApiResponse.error(404, "수정할 사용자를 찾을 수 없습니다"));
         }
         UserResponse user = userService.findById(userId);
-        return ResponseEntity.ok(ApiResponse.ok(new io.github.changmin6362.multistore.feature.user.web.response.UserResponse(user)));
+        // 컨트롤러 전용 래퍼 제거: 공용 UserResponse를 직접 반환
+        return ResponseEntity.ok(ApiResponse.ok(user));
     }
 
     /**
