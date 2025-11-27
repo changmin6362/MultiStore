@@ -1,6 +1,6 @@
 package io.github.changmin6362.multistore.domain.rolepermission;
 
-import io.github.changmin6362.multistore.domain.permission.dto.PermissionDto;
+import io.github.changmin6362.multistore.domain.permission.PermissionEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -14,6 +14,17 @@ import java.util.List;
 @Repository
 public class RolePermissionRepository {
 
+    // 역할별 권한 상세(조인)
+    private static final RowMapper<PermissionEntity> PERMISSION_MAPPER = (rs, rowNum) ->
+            new PermissionEntity(
+                    rs.getInt("permission_id"),
+                    rs.getString("permission_name"),
+                    rs.getString("permission_description"),
+                    rs.getString("resource_type"),
+                    rs.getString("action_type"),
+                    rs.getTimestamp("created_at"),
+                    rs.getTimestamp("updated_at")
+            );
     private final JdbcTemplate jdbcTemplate;
 
     public RolePermissionRepository(JdbcTemplate jdbcTemplate) {
@@ -32,18 +43,7 @@ public class RolePermissionRepository {
         return jdbcTemplate.update(sql, roleId, permissionId);
     }
 
-
-    // 역할별 권한 상세(조인)
-    private static final RowMapper<PermissionDto> PERMISSION_MAPPER = (rs, rowNum) ->
-            new PermissionDto(
-                rs.getLong("permission_id"),
-                rs.getString("permission_name"),
-                rs.getString("permission_description"),
-                rs.getString("resource_type"),
-                rs.getString("action_type")
-            );
-
-    public List<PermissionDto> findPermissionsByRoleId(Long roleId) {
+    public List<PermissionEntity> findPermissionsByRoleId(Long roleId) {
         String sql = "SELECT p.permission_id, p.permission_name, p.permission_description, p.resource_type, p.action_type " +
                 "FROM role_permission rp " +
                 "JOIN permission p ON p.permission_id = rp.permission_id " +
@@ -52,7 +52,7 @@ public class RolePermissionRepository {
     }
 
     // 사용자별 권한 상세(조인 체인)
-    public List<PermissionDto> findPermissionsByUserId(Long userId) {
+    public List<PermissionEntity> findPermissionsByUserId(Long userId) {
         String sql = "SELECT DISTINCT p.permission_id, p.permission_name, p.permission_description, p.resource_type, p.action_type " +
                 "FROM user_role ur " +
                 "JOIN role_permission rp ON rp.role_id = ur.role_id " +

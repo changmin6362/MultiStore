@@ -1,10 +1,9 @@
 package io.github.changmin6362.multistore.feature.authorization.controller;
 
 import io.github.changmin6362.multistore.common.web.ApiResponse;
-import io.github.changmin6362.multistore.domain.permission.dto.PermissionDto;
+import io.github.changmin6362.multistore.feature.authorization.web.response.PermissionResponse;
 import io.github.changmin6362.multistore.domain.role.dto.RoleDto;
 import io.github.changmin6362.multistore.feature.authorization.web.response.RolesResponse;
-import io.github.changmin6362.multistore.feature.authorization.web.response.PermissionsResponse;
 import io.github.changmin6362.multistore.feature.authorization.service.RolePermissionService;
 import io.github.changmin6362.multistore.feature.authorization.web.request.AssignRoleRequest;
 import io.github.changmin6362.multistore.feature.authorization.service.UserRoleService;
@@ -90,8 +89,9 @@ public class UserRoleController {
      */
     @GetMapping("/{userId}/permissions")
     public ResponseEntity<ApiResponse> getUserPermissions(@PathVariable Long userId) {
-        List<PermissionDto> permissions = rolePermissionService.findPermissionsByUserId(userId);
-        return ResponseEntity.ok(ApiResponse.ok(new PermissionsResponse(permissions)));
+        List<PermissionResponse> permissions = rolePermissionService.findPermissionsByUserId(userId);
+        // PermissionsResponse 래퍼 제거: 권한 리스트를 직접 반환
+        return ResponseEntity.ok(ApiResponse.ok(permissions));
     }
 
     /**

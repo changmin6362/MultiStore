@@ -1,12 +1,11 @@
 package io.github.changmin6362.multistore.feature.authorization.controller;
 
 import io.github.changmin6362.multistore.common.web.ApiResponse;
-import io.github.changmin6362.multistore.domain.permission.dto.PermissionDto;
+import io.github.changmin6362.multistore.feature.authorization.web.response.PermissionResponse;
 import io.github.changmin6362.multistore.feature.authorization.service.PermissionService;
 import io.github.changmin6362.multistore.feature.authorization.web.request.PermissionCreateRequest;
 import io.github.changmin6362.multistore.feature.authorization.web.request.PermissionUpdateRequest;
-import io.github.changmin6362.multistore.feature.authorization.web.response.PermissionResponse;
-import io.github.changmin6362.multistore.feature.authorization.web.response.PermissionsResponse;
+// 컨트롤러 전용 래퍼/DTO 사용 제거: 도메인의 PermissionResponse를 직접 반환
 import io.github.changmin6362.multistore.common.web.flags.DeletedResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,8 +31,9 @@ public class PermissionController {
      */
     @GetMapping
     public ResponseEntity<ApiResponse> getPermissions() {
-        List<PermissionDto> permissions = permissionService.findAll();
-        return ResponseEntity.ok(ApiResponse.ok(new PermissionsResponse(permissions)));
+        List<PermissionResponse> permissions = permissionService.findAll();
+        // 권한 정보를 담는 응답 전용 레코드(PermissionResponse)를 리스트로 직접 반환
+        return ResponseEntity.ok(ApiResponse.ok(permissions));
     }
 
     /**
@@ -59,8 +59,9 @@ public class PermissionController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.error(500, "권한 생성에 실패했습니다"));
         }
-        PermissionDto permission = permissionService.findByName(permissionName);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok(new PermissionResponse(permission)));
+        PermissionResponse permission = permissionService.findByName(permissionName);
+        // 컨트롤러 전용 PermissionResponse 래퍼 제거, 도메인 PermissionResponse 직접 사용
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok(permission));
     }
 
     /**
@@ -69,12 +70,13 @@ public class PermissionController {
      */
     @GetMapping("/{permissionId}")
     public ResponseEntity<ApiResponse> getPermission(@PathVariable Long permissionId) {
-        PermissionDto permission = permissionService.findById(permissionId);
+        PermissionResponse permission = permissionService.findById(permissionId);
         if (permission == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(ApiResponse.error(404, "권한을 찾을 수 없습니다"));
         }
-        return ResponseEntity.ok(ApiResponse.ok(new PermissionResponse(permission)));
+        // 도메인 PermissionResponse 직접 사용
+        return ResponseEntity.ok(ApiResponse.ok(permission));
     }
 
     /**
@@ -98,8 +100,9 @@ public class PermissionController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(ApiResponse.error(404, "권한 수정에 실패했습니다"));
         }
-        PermissionDto permission = permissionService.findById(permissionId);
-        return ResponseEntity.ok(ApiResponse.ok(new PermissionResponse(permission)));
+        PermissionResponse permission = permissionService.findById(permissionId);
+        // 도메인 PermissionResponse 직접 사용
+        return ResponseEntity.ok(ApiResponse.ok(permission));
     }
 
     /**

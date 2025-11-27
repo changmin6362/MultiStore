@@ -1,8 +1,19 @@
 package io.github.changmin6362.multistore.feature.authorization.web.response;
 
-import io.github.changmin6362.multistore.domain.permission.dto.PermissionDto;
-
 /**
- * 권한 단건 응답 DTO
+ * 권한 정보를 담는 응답 전용 레코드
+ *
+ * @param permissionId
+ * @param permissionName
+ * @param permissionDescription
+ * @param resourceType
+ * @param actionType
  */
-public record PermissionResponse(PermissionDto permission) {}
+public record PermissionResponse(
+        Long permissionId,
+        String permissionName,
+        String permissionDescription,
+        String resourceType,
+        String actionType
+) {
+}

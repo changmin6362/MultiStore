@@ -28,7 +28,6 @@ public class UserRepository {
             rs.getTimestamp("deleted_at")
     );
 
-    // 별도의 비밀번호 포함 매퍼는 불필요합니다. USER_ENTITY_MAPPER가 이미 password_hash까지 포함합니다.
 
     private final JdbcTemplate jdbcTemplate;
 
