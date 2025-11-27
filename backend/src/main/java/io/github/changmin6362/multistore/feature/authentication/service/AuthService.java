@@ -39,20 +39,22 @@ public class AuthService {
     }
 
     public AuthResponse signup(String emailAddress, String password, String nickName) {
-        if (userRepository.existsByEmail(emailAddress)) {
+        // findByEmail() 사용 - 기본 정보만 필요 (비밀번호 제외)
+        Map<String, Object> existingUser = userRepository.findByEmail(emailAddress);
+        if (existingUser != null) {
             return null; // 컨트롤러에서 409 처리
         }
         String passwordHash = hashPassword(password);
-        int saved = userRepository.save(emailAddress, passwordHash, nickName);
-        if (saved == 0) {
+        boolean saved = userRepository.save(emailAddress, passwordHash, nickName);
+        if (!saved) {
             return null; // 500로 바꾸고 싶다면 예외로 던지는 것도 가능
         }
-        Map<String, Object> user = userRepository.findByEmail(emailAddress);
+        Map<String, Object> user = userRepository.findByEmailWithPassword(emailAddress);
         return buildAuthResponse(user);
     }
 
     public AuthResponse login(String emailAddress, String password) {
-        Map<String, Object> user = userRepository.findByEmail(emailAddress);
+        Map<String, Object> user = userRepository.findByEmailWithPassword(emailAddress);
         if (user == null) return null;
         String storedHash = (String) user.get("password_hash");
         String providedHash = hashPassword(password);

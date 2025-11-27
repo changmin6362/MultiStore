@@ -32,13 +32,11 @@ public class UserService {
     }
 
     public boolean update(Long userId, String emailAddress, String nickName) {
-        int updated = userRepository.update(userId, emailAddress, nickName);
-        return updated > 0;
+        return userRepository.update(userId, emailAddress, nickName);
     }
 
     public boolean delete(Long userId) {
-        int deleted = userRepository.delete(userId);
-        return deleted > 0;
+        return userRepository.delete(userId);
     }
 
     private UserDto toDto(Map<String, Object> row) {
@@ -48,7 +46,6 @@ public class UserService {
         String nick = (String) row.get("nick_name");
         String createdAt = row.get("created_at") != null ? row.get("created_at").toString() : null;
         return new UserDto(id, email, nick, createdAt);
-        
     }
 
     private Long toLong(Object v) {
