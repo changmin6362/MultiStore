@@ -35,7 +35,7 @@ export const useLogin = (): UseLoginReturn => {
       const result = await response.json();
 
       if (!response.ok || !result.success) {
-        setError(result.error?.message || result.error?.error || "로그인 실패");
+        setError("이메일 또는 비밀번호가 잘못되었습니다.");
         return;
       }
 

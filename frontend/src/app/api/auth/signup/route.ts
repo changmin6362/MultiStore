@@ -28,7 +28,13 @@ export async function POST(request: Request) {
     }
 
     // result.data는 이미 AuthResponse 형식
-    return Response.json(result.data, { status: 201 });
+    return Response.json(
+      {
+        success: true,
+        ...result.data
+      },
+      { status: 201 }
+    );
   } catch (error) {
     return handleAuthError(
       {
