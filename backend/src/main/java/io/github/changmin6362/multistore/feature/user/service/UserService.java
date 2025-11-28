@@ -1,12 +1,13 @@
 package io.github.changmin6362.multistore.feature.user.service;
 
+import io.github.changmin6362.multistore.domain.user.UserEntity;
 import io.github.changmin6362.multistore.domain.user.UserRepository;
-import io.github.changmin6362.multistore.domain.user.dto.UserDto;
+import io.github.changmin6362.multistore.feature.common.response.UserResponse;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.math.BigInteger;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -17,43 +18,28 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<UserDto> findAll() {
-        List<Map<String, Object>> rows = userRepository.findAll();
-        List<UserDto> result = new ArrayList<>();
-        for (Map<String, Object> row : rows) {
-            result.add(toDto(row));
-        }
-        return result;
+    public List<UserResponse> findAll() {
+        return userRepository.findAll().stream().map(this::toResponse).collect(Collectors.toList());
     }
 
-    public UserDto findById(Long userId) {
-        Map<String, Object> row = userRepository.findById(userId);
-        return row == null ? null : toDto(row);
+    public UserResponse findById(BigInteger userId) {
+        UserEntity e = userRepository.findById(userId);
+        return e == null ? null : toResponse(e);
     }
 
-    public boolean update(Long userId, String emailAddress, String nickName) {
-        int updated = userRepository.update(userId, emailAddress, nickName);
-        return updated > 0;
+    public boolean update(BigInteger userId, String emailAddress, String nickName) {
+        return userRepository.update(userId, emailAddress, nickName) > 0;
     }
 
-    public boolean delete(Long userId) {
-        int deleted = userRepository.delete(userId);
-        return deleted > 0;
+    public boolean delete(BigInteger userId) {
+        return userRepository.delete(userId) > 0;
     }
 
-    private UserDto toDto(Map<String, Object> row) {
-        if (row == null) return null;
-        Long id = toLong(row.get("user_id"));
-        String email = (String) row.get("email_address");
-        String nick = (String) row.get("nick_name");
-        String createdAt = row.get("created_at") != null ? row.get("created_at").toString() : null;
-        return new UserDto(id, email, nick, createdAt);
-        
+    private UserResponse toResponse(UserEntity e) {
+        if (e == null) return null;
+        BigInteger id = e.userId();
+        String created = e.createdAt() == null ? null : e.createdAt().toString();
+        return new UserResponse(id, e.emailAddress(), e.nickName(), created);
     }
 
-    private Long toLong(Object v) {
-        if (v == null) return null;
-        if (v instanceof Number n) return n.longValue();
-        return Long.parseLong(v.toString());
-    }
 }

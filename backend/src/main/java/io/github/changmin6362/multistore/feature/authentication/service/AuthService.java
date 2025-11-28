@@ -1,7 +1,11 @@
 package io.github.changmin6362.multistore.feature.authentication.service;
 
+import io.github.changmin6362.multistore.domain.user.UserEntity;
 import io.github.changmin6362.multistore.domain.user.UserRepository;
-import io.github.changmin6362.multistore.feature.authentication.api.*;
+import io.github.changmin6362.multistore.feature.authentication.api.AuthResponse;
+import io.github.changmin6362.multistore.feature.authentication.api.TokenPairResponse;
+import io.github.changmin6362.multistore.feature.authentication.api.TokenVerifyResponse;
+import io.github.changmin6362.multistore.feature.common.response.UserResponse;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -10,6 +14,7 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -39,24 +44,32 @@ public class AuthService {
     }
 
     public AuthResponse signup(String emailAddress, String password, String nickName) {
-        if (userRepository.existsByEmail(emailAddress)) {
+        // 사용자 존재 여부 확인 (엔티티 조회 후 서비스에서 매핑)
+        UserEntity existingUser = userRepository.findByEmail(emailAddress);
+        if (existingUser != null) {
             return null; // 컨트롤러에서 409 처리
         }
         String passwordHash = hashPassword(password);
-        int saved = userRepository.save(emailAddress, passwordHash, nickName);
-        if (saved == 0) {
-            return null; // 500로 바꾸고 싶다면 예외로 던지는 것도 가능
+        boolean saved = userRepository.save(emailAddress, passwordHash, nickName) > 0;
+        if (!saved) {
+            return null; // 필요시 예외 변환
         }
-        Map<String, Object> user = userRepository.findByEmail(emailAddress);
-        return buildAuthResponse(user);
+        UserEntity e = userRepository.findByEmail(emailAddress);
+        UserResponse user = e == null ? null : toResponse(e);
+        return user == null ? null : buildAuthResponse(user);
     }
 
     public AuthResponse login(String emailAddress, String password) {
-        Map<String, Object> user = userRepository.findByEmail(emailAddress);
-        if (user == null) return null;
-        String storedHash = (String) user.get("password_hash");
+        // 비밀번호 해시만 별도 조회 (엔티티 노출 없이)
+        String storedHash = userRepository.findPasswordHashByEmail(emailAddress);
+        if (storedHash == null) return null;
+
         String providedHash = hashPassword(password);
-        if (storedHash == null || !storedHash.equals(providedHash)) return null;
+        if (!storedHash.equals(providedHash)) return null;
+
+        UserEntity e = userRepository.findByEmail(emailAddress);
+        UserResponse user = e == null ? null : toResponse(e);
+        if (user == null) return null;
         return buildAuthResponse(user);
     }
 
@@ -121,18 +134,18 @@ public class AuthService {
         }
     }
 
-    private AuthResponse buildAuthResponse(Map<String, Object> user) {
+    private AuthResponse buildAuthResponse(UserResponse user) {
         Instant now = Instant.now();
         Date issuedAt = Date.from(now);
         Date expiry = Date.from(now.plusSeconds(accessTokenTtlSeconds));
-        String subject = String.valueOf(user.get("user_id"));
+        String subject = String.valueOf(user.userId());
 
         String accessToken = Jwts.builder()
                 .setSubject(subject)
                 .setIssuedAt(issuedAt)
                 .setExpiration(expiry)
-                .claim("email", user.get("email_address"))
-                .claim("nickName", user.get("nick_name"))
+                .claim("email", user.emailAddress())
+                .claim("nickName", user.nickName())
                 .signWith(jwtKey, SignatureAlgorithm.HS256)
                 .compact();
 
@@ -141,24 +154,26 @@ public class AuthService {
         refreshTokenStore.put(refreshToken, new RefreshTokenRecord(subject, refreshExpiry));
 
         return new AuthResponse(
-                toLong(user.get("user_id")),
-                (String) user.get("email_address"),
-                (String) user.get("nick_name"),
-                user.get("created_at") != null ? user.get("created_at").toString() : null,
+                user.userId(),
+                user.emailAddress(),
+                user.nickName(),
+                user.createdAt(),
                 accessToken,
                 refreshToken
         );
-    }
-
-    private Long toLong(Object v) {
-        if (v == null) return null;
-        if (v instanceof Number n) return n.longValue();
-        return Long.parseLong(v.toString());
     }
 
     private String generateRefreshToken() {
         return UUID.randomUUID().toString() + UUID.randomUUID();
     }
 
-    private record RefreshTokenRecord(String subject, Date expiresAt) {}
+    private UserResponse toResponse(UserEntity e) {
+        if (e == null) return null;
+        BigInteger id = e.userId();
+        String created = e.createdAt() == null ? null : e.createdAt().toString();
+        return new UserResponse(id, e.emailAddress(), e.nickName(), created);
+    }
+
+    private record RefreshTokenRecord(String subject, Date expiresAt) {
+    }
 }

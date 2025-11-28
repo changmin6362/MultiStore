@@ -35,13 +35,18 @@ export const useSignup = (): UseSignupReturn => {
       const result = await response.json();
 
       if (!response.ok || !result.success) {
-        setError(
-          result.error?.message || result.error?.error || "회원가입 실패"
-        );
+        // 백엔드 에러 응답: { error: string, status: number, message?: string }
+        const errorMessage =
+          result.message ||
+          result.error?.message ||
+          result.error?.error ||
+          "회원가입 실패";
+        setError(errorMessage);
         return;
       }
 
-      const authData: AuthResponse = result.data;
+      // 백엔드 응답: { success: true, userId, emailAddress, nickName, accessToken, refreshToken, ... }
+      const authData: AuthResponse = result;
 
       // 토큰 저장 (localStorage 또는 쿠키)
       localStorage.setItem("accessToken", authData.accessToken);
@@ -59,8 +64,8 @@ export const useSignup = (): UseSignupReturn => {
         })
       );
 
-      // 회원가입 성공 후 대시보드로 이동
-      router.push("/");
+      // 회원가입 성공 후 로그인 페이지로 이동
+      router.push("/auth/signin");
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "회원가입 중 오류가 발생했습니다"

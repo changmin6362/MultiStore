@@ -1,12 +1,11 @@
 package io.github.changmin6362.multistore.feature.authorization.controller;
 
 import io.github.changmin6362.multistore.common.web.ApiResponse;
-import io.github.changmin6362.multistore.domain.permission.dto.PermissionDto;
+import io.github.changmin6362.multistore.feature.authorization.web.response.PermissionResponse;
 import io.github.changmin6362.multistore.feature.authorization.service.PermissionService;
 import io.github.changmin6362.multistore.feature.authorization.web.request.PermissionCreateRequest;
 import io.github.changmin6362.multistore.feature.authorization.web.request.PermissionUpdateRequest;
-import io.github.changmin6362.multistore.feature.authorization.web.response.PermissionResponse;
-import io.github.changmin6362.multistore.feature.authorization.web.response.PermissionsResponse;
+
 import io.github.changmin6362.multistore.common.web.flags.DeletedResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,8 +31,9 @@ public class PermissionController {
      */
     @GetMapping
     public ResponseEntity<ApiResponse> getPermissions() {
-        List<PermissionDto> permissions = permissionService.findAll();
-        return ResponseEntity.ok(ApiResponse.ok(new PermissionsResponse(permissions)));
+        List<PermissionResponse> permissions = permissionService.findAll();
+        // 권한 정보를 담는 응답 전용 레코드(PermissionResponse)를 리스트로 직접 반환
+        return ResponseEntity.ok(ApiResponse.ok(permissions));
     }
 
     /**
@@ -59,8 +59,9 @@ public class PermissionController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.error(500, "권한 생성에 실패했습니다"));
         }
-        PermissionDto permission = permissionService.findByName(permissionName);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok(new PermissionResponse(permission)));
+        PermissionResponse permission = permissionService.findByName(permissionName);
+        // 컨트롤러 전용 PermissionResponse 래퍼 제거, 도메인 PermissionResponse 직접 사용
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok(permission));
     }
 
     /**
@@ -68,13 +69,14 @@ public class PermissionController {
      * 권한 단건 조회 (없으면 404)
      */
     @GetMapping("/{permissionId}")
-    public ResponseEntity<ApiResponse> getPermission(@PathVariable Long permissionId) {
-        PermissionDto permission = permissionService.findById(permissionId);
+    public ResponseEntity<ApiResponse> getPermission(@PathVariable int permissionId) {
+        PermissionResponse permission = permissionService.findById(permissionId);
         if (permission == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(ApiResponse.error(404, "권한을 찾을 수 없습니다"));
         }
-        return ResponseEntity.ok(ApiResponse.ok(new PermissionResponse(permission)));
+        // 도메인 PermissionResponse 직접 사용
+        return ResponseEntity.ok(ApiResponse.ok(permission));
     }
 
     /**
@@ -83,7 +85,7 @@ public class PermissionController {
      * 요청 바디: { "permissionName": "...", "resourceType": "...", "actionType": "...", "permissionDescription": "..." }
      */
     @PutMapping("/{permissionId}")
-    public ResponseEntity<ApiResponse> updatePermission(@PathVariable Long permissionId,
+    public ResponseEntity<ApiResponse> updatePermission(@PathVariable int permissionId,
                                                                              @RequestBody PermissionUpdateRequest body) {
         String permissionName = body != null ? body.permissionName() : null;
         String resourceType = body != null ? body.resourceType() : null;
@@ -98,8 +100,9 @@ public class PermissionController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(ApiResponse.error(404, "권한 수정에 실패했습니다"));
         }
-        PermissionDto permission = permissionService.findById(permissionId);
-        return ResponseEntity.ok(ApiResponse.ok(new PermissionResponse(permission)));
+        PermissionResponse permission = permissionService.findById(permissionId);
+        // 도메인 PermissionResponse 직접 사용
+        return ResponseEntity.ok(ApiResponse.ok(permission));
     }
 
     /**
@@ -107,7 +110,7 @@ public class PermissionController {
      * 권한 삭제 (없으면 404)
      */
     @DeleteMapping("/{permissionId}")
-    public ResponseEntity<ApiResponse> deletePermission(@PathVariable Long permissionId) {
+    public ResponseEntity<ApiResponse> deletePermission(@PathVariable int permissionId) {
         boolean deleted = permissionService.delete(permissionId);
         if (!deleted) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

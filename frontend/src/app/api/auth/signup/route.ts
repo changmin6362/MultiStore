@@ -1,4 +1,5 @@
 import type { SignupRequest, AuthResponse } from "@/app/api/.common/types";
+
 import {
   fetchBackendApi as fetchAuthApi,
   handleApiError as handleAuthError
@@ -14,6 +15,8 @@ export async function POST(request: Request) {
   try {
     const body = (await request.json()) as SignupRequest;
 
+    // fetchAuthApi<AuthResponse>는 ApiResult<AuthResponse>를 반환
+    // { success, data: AuthResponse, error, status }
     const result = await fetchAuthApi<AuthResponse>({
       method: "POST",
       url: "/api/auth/signup",
@@ -24,6 +27,7 @@ export async function POST(request: Request) {
       return handleAuthError(result.error, "회원가입 실패");
     }
 
+    // result.data는 이미 AuthResponse 형식
     return Response.json(result.data, { status: 201 });
   } catch (error) {
     return handleAuthError(

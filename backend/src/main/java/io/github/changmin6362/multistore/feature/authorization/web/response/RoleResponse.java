@@ -1,8 +1,11 @@
 package io.github.changmin6362.multistore.feature.authorization.web.response;
 
-import io.github.changmin6362.multistore.domain.role.dto.RoleDto;
-
 /**
- * 역할 단건 응답 DTO
+ * 역할 정보를 담는 응답 전용 레코드
  */
-public record RoleResponse(RoleDto role) {}
+public record RoleResponse(
+        int roleId,
+        String roleName,
+        String roleDescription
+) {
+}

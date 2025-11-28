@@ -43,7 +43,9 @@ export const useRoleManagement = (): UseRoleManagementReturn => {
         throw new Error(result.error.message || result.error.error);
       }
 
-      return result.data.role || null;
+      // result.data는 백엔드 응답 { success: true, data: RoleDto }
+      const roleData = (result.data as RoleResponse).data;
+      return roleData || null;
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : "역할 생성 실패";
       setError(errorMsg);

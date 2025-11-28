@@ -19,7 +19,11 @@ export const useUserRoles = (userId: number) => {
         throw new Error("역할 조회 실패");
       }
 
-      setRoles(data.roles || []);
+      // 백엔드/프록시 응답 정규화: 배열을 직접 반환하도록 변경됨
+      const rolesArray = Array.isArray(data)
+        ? data
+        : (data?.data as any[]) || data?.roles || [];
+      setRoles(rolesArray);
     } catch (err) {
       setError(err instanceof Error ? err.message : "오류가 발생했습니다");
     } finally {

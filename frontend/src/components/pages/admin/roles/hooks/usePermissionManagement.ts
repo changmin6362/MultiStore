@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type {
   PermissionDto,
-  PermissionResponse
+  PermissionSingleResponse
 } from "@/app/api/.common/types";
 import { fetchBackendApi } from "@/app/api/.common/utils";
 
@@ -39,7 +39,7 @@ export const usePermissionManagement = (): UsePermissionManagementReturn => {
     try {
       setLoading(true);
       setError(null);
-      const result = await fetchBackendApi<PermissionResponse>({
+      const result = await fetchBackendApi<PermissionSingleResponse>({
         method: "POST",
         url: "/api/rbac/permissions",
         body: {
@@ -54,7 +54,8 @@ export const usePermissionManagement = (): UsePermissionManagementReturn => {
         throw new Error(result.error.message || result.error.error);
       }
 
-      return result.data.permission || null;
+      // result.data는 PermissionSingleResponse 객체 { success, data: PermissionDto }
+      return result.data.data;
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : "권한 생성 실패";
       setError(errorMsg);
@@ -74,7 +75,7 @@ export const usePermissionManagement = (): UsePermissionManagementReturn => {
     try {
       setLoading(true);
       setError(null);
-      const result = await fetchBackendApi<PermissionResponse>({
+      const result = await fetchBackendApi<PermissionSingleResponse>({
         method: "PUT",
         url: `/api/rbac/permissions/${permissionId}`,
         body: {

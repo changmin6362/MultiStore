@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type {
   PermissionDto,
-  PermissionsResponse
+  PermissionsListResponse
 } from "@/app/api/.common/types";
 import { fetchBackendApi } from "@/app/api/.common/utils";
 
@@ -25,7 +25,7 @@ export const useRolePermissions = (): UseRolePermissionsReturn => {
     try {
       setLoading(true);
       setError(null);
-      const result = await fetchBackendApi<PermissionsResponse>({
+      const result = await fetchBackendApi<PermissionsListResponse>({
         method: "GET",
         url: `/api/rbac/roles/${roleId}/permissions`
       });
@@ -34,7 +34,8 @@ export const useRolePermissions = (): UseRolePermissionsReturn => {
         throw new Error(result.error.message || result.error.error);
       }
 
-      setPermissions(result.data.permissions || []);
+      // result.data는 PermissionsListResponse 객체 { success, data: PermissionDto[] }
+      setPermissions(result.data.data);
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : "권한 조회 실패";
       setError(errorMsg);

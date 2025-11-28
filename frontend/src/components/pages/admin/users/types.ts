@@ -18,5 +18,7 @@ export interface UserResponse {
 
 export interface UsersApiResponse {
   success: boolean;
-  users: RawUser[];
+  // 백엔드 ApiResponse 스키마 변경 반영: data가 바로 사용자 배열을 담습니다.
+  // 하위 호환을 위해 훅에서 data.users도 함께 처리합니다.
+  data: RawUser[];
 }

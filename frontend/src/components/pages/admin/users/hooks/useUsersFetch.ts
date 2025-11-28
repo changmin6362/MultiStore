@@ -19,8 +19,11 @@ export const useUsersFetch = () => {
           throw new Error("사용자 목록 조회 실패");
         }
 
-        // 백엔드 응답 구조: { success: true, users: [...] }
-        const userList = data.users || [];
+        // 백엔드 응답 구조 변경 대응
+        // 이전: { success: true, users: [...] }
+        // 현재: { success: true, data: [...] }
+        const anyData: any = data as any;
+        const userList = (anyData.data as any[]) || anyData.users || [];
         const convertedUsers = userList.map(convertUser);
 
         setUsers(convertedUsers);

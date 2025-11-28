@@ -1,19 +1,17 @@
 package io.github.changmin6362.multistore.feature.authorization.controller;
 
 import io.github.changmin6362.multistore.common.web.ApiResponse;
-import io.github.changmin6362.multistore.domain.role.dto.RoleDto;
+import io.github.changmin6362.multistore.common.web.flags.DeletedResponse;
 import io.github.changmin6362.multistore.feature.authorization.service.RoleService;
+import io.github.changmin6362.multistore.feature.authorization.web.request.RoleCreateRequest;
+import io.github.changmin6362.multistore.feature.authorization.web.request.RoleUpdateRequest;
+import io.github.changmin6362.multistore.feature.authorization.web.response.RoleResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import io.github.changmin6362.multistore.feature.authorization.web.request.RoleCreateRequest;
-import io.github.changmin6362.multistore.feature.authorization.web.request.RoleUpdateRequest;
-import io.github.changmin6362.multistore.feature.authorization.web.response.RoleResponse;
-import io.github.changmin6362.multistore.feature.authorization.web.response.RolesResponse;
-import io.github.changmin6362.multistore.common.web.flags.DeletedResponse;
 
 @RestController
 @RequestMapping("/api/rbac/roles")
@@ -33,8 +31,9 @@ public class RoleController {
      */
     @GetMapping
     public ResponseEntity<ApiResponse> getRoles() {
-        List<RoleDto> roles = roleService.findAll();
-        return ResponseEntity.ok(ApiResponse.ok(new RolesResponse(roles)));
+        List<RoleResponse> roles = roleService.findAll();
+        // 중복 래퍼 제거: 역할 리스트를 직접 반환
+        return ResponseEntity.ok(ApiResponse.ok(roles));
     }
 
     /**
@@ -60,8 +59,9 @@ public class RoleController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.error(500, "역할 생성에 실패했습니다"));
         }
-        RoleDto role = roleService.findByName(roleName);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok(new RoleResponse(role)));
+        RoleResponse role = roleService.findByName(roleName);
+        // 중복 래퍼 제거: 단건 역할을 직접 반환
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok(role));
     }
 
     /**
@@ -69,13 +69,14 @@ public class RoleController {
      * 역할 단건 조회 (없으면 404)
      */
     @GetMapping("/{roleId}")
-    public ResponseEntity<ApiResponse> getRole(@PathVariable Long roleId) {
-        RoleDto role = roleService.findById(roleId);
+    public ResponseEntity<ApiResponse> getRole(@PathVariable int roleId) {
+        RoleResponse role = roleService.findById(roleId);
         if (role == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(ApiResponse.error(404, "역할을 찾을 수 없습니다"));
         }
-        return ResponseEntity.ok(ApiResponse.ok(new RoleResponse(role)));
+        // 중복 래퍼 제거: 단건 역할을 직접 반환
+        return ResponseEntity.ok(ApiResponse.ok(role));
     }
 
     /**
@@ -84,8 +85,8 @@ public class RoleController {
      * 요청 바디: { "roleName": "ROLE_MANAGER", "roleDescription": "..." }
      */
     @PutMapping("/{roleId}")
-    public ResponseEntity<ApiResponse> updateRole(@PathVariable Long roleId,
-                                                                       @RequestBody RoleUpdateRequest body) {
+    public ResponseEntity<ApiResponse> updateRole(@PathVariable int roleId,
+                                                  @RequestBody RoleUpdateRequest body) {
         String roleName = body != null ? body.roleName() : null;
         String roleDescription = body != null ? body.roleDescription() : null;
         if (!StringUtils.hasText(roleName)) {
@@ -97,8 +98,9 @@ public class RoleController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(ApiResponse.error(404, "역할 수정에 실패했습니다"));
         }
-        RoleDto role = roleService.findById(roleId);
-        return ResponseEntity.ok(ApiResponse.ok(new RoleResponse(role)));
+        RoleResponse role = roleService.findById(roleId);
+        // 중복 래퍼 제거: 단건 역할을 직접 반환
+        return ResponseEntity.ok(ApiResponse.ok(role));
     }
 
     /**
@@ -106,7 +108,7 @@ public class RoleController {
      * 역할 삭제 (없으면 404)
      */
     @DeleteMapping("/{roleId}")
-    public ResponseEntity<ApiResponse> deleteRole(@PathVariable Long roleId) {
+    public ResponseEntity<ApiResponse> deleteRole(@PathVariable int roleId) {
         boolean deleted = roleService.delete(roleId);
         if (!deleted) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

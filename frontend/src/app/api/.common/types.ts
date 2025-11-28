@@ -126,10 +126,11 @@ export interface RoleDto {
 
 /**
  * 역할 목록 응답 타입
+ * 새 형식: { success: true, data: [...roles] }
  */
 export interface RolesResponse {
   success: boolean;
-  roles: RoleDto[];
+  data: RoleDto[];
 }
 
 /**
@@ -161,10 +162,20 @@ export interface PermissionDto {
 
 /**
  * 권한 목록 응답 타입
+ * 백엔드: { success: true, data: [PermissionDto[]] }
  */
-export interface PermissionsResponse {
+export interface PermissionsListResponse {
   success: boolean;
-  permissions: PermissionDto[];
+  data: PermissionDto[];
+}
+
+/**
+ * 권한 단건 응답 타입
+ * 백엔드: { success: true, data: PermissionDto }
+ */
+export interface PermissionSingleResponse {
+  success: boolean;
+  data: PermissionDto;
 }
 
 /**
@@ -186,21 +197,12 @@ export interface PermissionCreateRequest {
 }
 
 /**
- * 역할 생성 응답
+ * 역할 생성/수정 응답
+ * 새 형식: { success: true, data: { roleId, roleName, ... } }
  */
 export interface RoleResponse {
   success: boolean;
-  role?: RoleDto;
-  data?: RoleDto;
-}
-
-/**
- * 권한 생성 응답
- */
-export interface PermissionResponse {
-  success: boolean;
-  permission?: PermissionDto;
-  data?: PermissionDto;
+  data: RoleDto;
 }
 
 /**
