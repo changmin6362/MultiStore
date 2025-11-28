@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { SignupRequest, AuthResponse } from "@/app/api/.common/types";
+import type { SignupRequest } from "@/app/api/.common/types";
 
 interface UseSignupReturn {
   signup: (data: SignupRequest) => Promise<void>;
@@ -12,7 +12,14 @@ interface UseSignupReturn {
 
 /**
  * 회원가입 커스텀 훅
- * API 호출, 토큰 관리, 네비게이션을 처리합니다
+ * API 호출, 네비게이션을 처리합니다
+ *
+ * 흐름:
+ * 1. 클라이언트: /api/auth/signup에 요청
+ * 2. 서버 라우트: 백엔드 /api/auth/signup에 요청
+ * 3. 백엔드: Authorization 헤더에 토큰 반환
+ * 4. 서버 라우트: 토큰을 HttpOnly 쿠키에 저장
+ * 5. 클라이언트: 로그인 페이지로 이동
  */
 export const useSignup = (): UseSignupReturn => {
   const [loading, setLoading] = useState(false);
@@ -30,12 +37,12 @@ export const useSignup = (): UseSignupReturn => {
           "Content-Type": "application/json"
         },
         body: JSON.stringify(data)
+        // HttpOnly 쿠키는 자동으로 저장되므로 credentials 불필요
       });
 
       const result = await response.json();
 
       if (!response.ok || !result.success) {
-        // 백엔드 에러 응답: { error: string, status: number, message?: string }
         const errorMessage =
           result.message ||
           result.error?.message ||
@@ -44,25 +51,6 @@ export const useSignup = (): UseSignupReturn => {
         setError(errorMessage);
         return;
       }
-
-      // 백엔드 응답: { success: true, userId, emailAddress, nickName, accessToken, refreshToken, ... }
-      const authData: AuthResponse = result;
-
-      // 토큰 저장 (localStorage 또는 쿠키)
-      localStorage.setItem("accessToken", authData.accessToken);
-      if (authData.refreshToken) {
-        localStorage.setItem("refreshToken", authData.refreshToken);
-      }
-
-      // 사용자 정보 저장
-      localStorage.setItem(
-        "currentUser",
-        JSON.stringify({
-          userId: authData.userId,
-          emailAddress: authData.emailAddress,
-          nickName: authData.nickName
-        })
-      );
 
       // 회원가입 성공 후 로그인 페이지로 이동
       router.push("/auth/signin");

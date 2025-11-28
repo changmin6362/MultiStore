@@ -11,15 +11,16 @@ import { decodeJwtUserId } from "@/utils/jwt";
  * 4. ACCESS_ADMIN_PAGE 권한 확인 결과 반환
  */
 export async function GET() {
+  const debugInfo: Record<string, string | number | boolean | string[] | null> =
+    {};
+
   try {
     const headersList = await headers();
 
     // Step 1: HttpOnly 쿠키에서 accessToken 추출
     const cookieString = headersList.get("cookie") || "";
-    console.log(
-      "[/api/auth/check-admin-access] Cookie string:",
-      cookieString ? "found" : "not found"
-    );
+    debugInfo.cookieStringFound = !!cookieString;
+    debugInfo.cookieStringLength = cookieString.length;
 
     const cookies: Record<string, string> = {};
     cookieString.split(";").forEach((cookie) => {
@@ -29,23 +30,30 @@ export async function GET() {
       }
     });
 
-    console.log(
-      "[/api/auth/check-admin-access] Cookie keys:",
-      Object.keys(cookies)
-    );
+    debugInfo.cookieKeys = Object.keys(cookies);
+    debugInfo.hasAccessToken = "access_token" in cookies;
 
-    const accessToken = cookies.access_token;
-    console.log(
-      "[/api/auth/check-admin-access] access_token found:",
-      !!accessToken
-    );
+    let accessToken = cookies.access_token;
+
+    // 쿠키 값이 URL 인코딩되었을 수 있으므로 디코딩
+    if (accessToken) {
+      try {
+        accessToken = decodeURIComponent(accessToken);
+        debugInfo.tokenDecodedSuccessfully = true;
+      } catch (e) {
+        debugInfo.tokenDecodedSuccessfully = false;
+        debugInfo.decodingError = String(e);
+      }
+    }
+
+    debugInfo.accessTokenExists = !!accessToken;
 
     if (!accessToken) {
-      console.warn("[/api/auth/check-admin-access] access_token not found");
       return Response.json(
         {
           success: false,
-          error: "로그인 정보를 찾을 수 없습니다"
+          error: "로그인 정보를 찾을 수 없습니다",
+          debug: debugInfo
         },
         { status: 401 }
       );
@@ -53,14 +61,15 @@ export async function GET() {
 
     // Step 2: JWT에서 userId 추출
     const userId = decodeJwtUserId(accessToken);
-    console.log("[/api/auth/check-admin-access] Extracted userId:", userId);
+    debugInfo.userIdExtracted = !!userId;
+    debugInfo.userId = userId;
 
     if (!userId) {
-      console.warn("[/api/auth/check-admin-access] Failed to extract userId");
       return Response.json(
         {
           success: false,
-          error: "토큰에서 사용자 ID를 추출할 수 없습니다"
+          error: "토큰에서 사용자 ID를 추출할 수 없습니다",
+          debug: debugInfo
         },
         { status: 401 }
       );
@@ -71,11 +80,6 @@ export async function GET() {
       process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080";
     const permissionCheckUrl = `${backendUrl}/api/rbac/users/${userId}/permissions/check?permissionName=ACCESS_ADMIN_PAGE`;
 
-    console.log(
-      "[/api/auth/check-admin-access] Calling backend:",
-      permissionCheckUrl
-    );
-
     const backendResponse = await fetch(permissionCheckUrl, {
       method: "GET",
       headers: {
@@ -83,11 +87,6 @@ export async function GET() {
         Authorization: `Bearer ${accessToken}`
       }
     });
-
-    console.log(
-      "[/api/auth/check-admin-access] Backend response status:",
-      backendResponse.status
-    );
 
     if (!backendResponse.ok) {
       const errorData = await backendResponse.json().catch(() => ({}));
@@ -103,10 +102,6 @@ export async function GET() {
 
     // Step 4: 백엔드 응답 파싱
     const backendData = await backendResponse.json();
-    console.log(
-      "[/api/auth/check-admin-access] Backend response:",
-      backendData
-    );
 
     // 응답 형식: { success: true, allowed: true }
     // AllowedResponse는 @JsonUnwrapped로 직접 필드 노출
@@ -117,7 +112,8 @@ export async function GET() {
         success: true,
         data: {
           allowed
-        }
+        },
+        debug: debugInfo
       },
       { status: 200 }
     );

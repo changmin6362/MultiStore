@@ -19,7 +19,7 @@ public class ApiResponse {
     @JsonUnwrapped
     private Object data;
 
-    private ApiResponse(boolean success, Integer status, String message, Object data) {
+    public ApiResponse(boolean success, Integer status, String message, Object data) {
         this.success = success;
         this.status = status;
         this.message = message;
