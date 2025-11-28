@@ -14,6 +14,7 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -49,7 +50,7 @@ public class AuthService {
             return null; // 컨트롤러에서 409 처리
         }
         String passwordHash = hashPassword(password);
-        boolean saved = userRepository.save(emailAddress, passwordHash, nickName);
+        boolean saved = userRepository.save(emailAddress, passwordHash, nickName) > 0;
         if (!saved) {
             return null; // 필요시 예외 변환
         }
@@ -166,12 +167,13 @@ public class AuthService {
         return UUID.randomUUID().toString() + UUID.randomUUID();
     }
 
-    private record RefreshTokenRecord(String subject, Date expiresAt) {}
-
     private UserResponse toResponse(UserEntity e) {
         if (e == null) return null;
-        Long id = e.userId() == null ? null : e.userId().longValue();
+        BigInteger id = e.userId();
         String created = e.createdAt() == null ? null : e.createdAt().toString();
         return new UserResponse(id, e.emailAddress(), e.nickName(), created);
+    }
+
+    private record RefreshTokenRecord(String subject, Date expiresAt) {
     }
 }

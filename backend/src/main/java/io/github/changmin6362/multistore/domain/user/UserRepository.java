@@ -1,5 +1,5 @@
 package io.github.changmin6362.multistore.domain.user;
-import org.springframework.dao.DataAccessException;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -34,20 +34,21 @@ public class UserRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    /**
+     * BigInteger 변환 유틸리티 메서드
+     */
     private static BigInteger toBigInteger(Object v) {
         if (v == null) return null;
         if (v instanceof BigInteger b) return b;
-        if (v instanceof Number n) return BigInteger.valueOf(n.longValue());
+        if (v instanceof Number n) return new BigInteger(n.toString());
         return new BigInteger(v.toString());
     }
 
-    // DTO 변환은 서비스 계층 책임입니다. (DDD 경계 준수)
 
     /**
      * 모든 사용자 정보 조회 (삭제된 사용자 제외)
      *
-     * @return 사용자 정보 List
-     * @throws DataAccessException Query 실패 시 발생
+     * @return 사용자 정보 목록
      */
     public List<UserEntity> findAll() {
         String sql = "SELECT user_id, email_address, password_hash, nick_name, created_at, updated_at, deleted_at FROM user WHERE deleted_at IS NULL";
@@ -55,44 +56,32 @@ public class UserRepository {
     }
 
     /**
-     * 모든 사용자 정보 조회 (삭제된 사용자 포함)
-     *
-     * @return 사용자 정보 List
-     * @throws DataAccessException Query 실패 시 발생
-     */
-    public List<UserEntity> findDeleted() {
-        String sql = "SELECT user_id, email_address, password_hash, nick_name, created_at, updated_at, deleted_at FROM user WHERE deleted_at IS NOT NULL";
-        return jdbcTemplate.query(sql, USER_ENTITY_MAPPER);
-    }
-
-    /**
-     * 사용자 ID로 사용자 정보 조회*
+     * ID 기준으로 사용자 정보 조회
      *
      * @param userId 사용자 ID
-     * @return 사용자 정보 (존재하지 않을 경우 null)
-     * @throws DataAccessException Query 실패 시 발생
+     * @return 사용자 정보
      */
-    public UserEntity findById(Long userId) {
+    public UserEntity findById(BigInteger userId) {
         String sql = "SELECT user_id, email_address, password_hash, nick_name, created_at, updated_at, deleted_at FROM user WHERE user_id = ? AND deleted_at IS NULL";
         List<UserEntity> results = jdbcTemplate.query(sql, USER_ENTITY_MAPPER, userId);
         return results.isEmpty() ? null : results.get(0);
     }
 
     /**
-     * DB에 사용자 정보를 등록
+     * 사용자 정보 저장
      *
      * @param emailAddress 이메일 주소
      * @param passwordHash 해시화된 비밀번호
      * @param nickName     닉네임
-     * @return 성공 여부
+     * @return 영향 받은 행의 수
      */
-    public boolean save(String emailAddress, String passwordHash, String nickName) {
+    public int save(String emailAddress, String passwordHash, String nickName) {
         String sql = "INSERT INTO user (email_address, password_hash, nick_name, created_at, updated_at, deleted_at) VALUES (?, ?, ?, NOW(), NOW(), NULL)";
-        return jdbcTemplate.update(sql, emailAddress, passwordHash, nickName) > 0;
+        return jdbcTemplate.update(sql, emailAddress, passwordHash, nickName);
     }
 
     /**
-     * 이메일로 사용자 정보 조회 (비밀번호 제외)
+     * 이메일 기준으로 사용자 정보 조회 (비밀번호 제외)
      *
      * @param emailAddress 이메일 주소
      * @return 사용자 정보
@@ -104,40 +93,27 @@ public class UserRepository {
     }
 
     /**
-     * 이메일로 사용자 정보 조회 (비밀번호 포함)
-     * USER_ENTITY_MAPPER가 password_hash를 포함하므로 동일 매퍼를 재사용합니다.
-     *
-     * @param emailAddress 이메일 주소
-     * @return 사용자 정보
-     */
-    public UserEntity findByEmailWithPassword(String emailAddress) {
-        String sql = "SELECT user_id, email_address, password_hash, nick_name, created_at, updated_at, deleted_at FROM user WHERE email_address = ? AND deleted_at IS NULL";
-        List<UserEntity> results = jdbcTemplate.query(sql, USER_ENTITY_MAPPER, emailAddress);
-        return results.isEmpty() ? null : results.get(0);
-    }
-
-    /**
      * 사용자의 정보 갱신
      *
      * @param userId       사용자 ID
      * @param emailAddress 이메일 주소
      * @param nickName     닉네임
-     * @return 성공 여부
+     * @return 영향 받은 행의 수
      */
-    public boolean update(Long userId, String emailAddress, String nickName) {
+    public int update(BigInteger userId, String emailAddress, String nickName) {
         String sql = "UPDATE user SET email_address = ?, nick_name = ?, updated_at = NOW() WHERE user_id = ?";
-        return jdbcTemplate.update(sql, emailAddress, nickName, userId) > 0;
+        return jdbcTemplate.update(sql, emailAddress, nickName, userId);
     }
 
     /**
      * 사용자 삭제
      *
      * @param userId 사용자 ID
-     * @return 성공 여부
+     * @return 영향 받은 행의 수
      */
-    public boolean delete(Long userId) {
+    public int delete(BigInteger userId) {
         String sql = "UPDATE user SET deleted_at = NOW() WHERE user_id = ?";
-        return jdbcTemplate.update(sql, userId) > 0;
+        return jdbcTemplate.update(sql, userId);
     }
 
     /**

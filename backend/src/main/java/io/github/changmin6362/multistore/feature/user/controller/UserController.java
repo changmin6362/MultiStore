@@ -2,14 +2,15 @@ package io.github.changmin6362.multistore.feature.user.controller;
 
 import io.github.changmin6362.multistore.common.web.ApiResponse;
 import io.github.changmin6362.multistore.common.web.flags.DeletedResponse;
-import io.github.changmin6362.multistore.feature.user.web.request.UpdateUserRequest;
 import io.github.changmin6362.multistore.feature.common.response.UserResponse;
 import io.github.changmin6362.multistore.feature.user.service.UserService;
+import io.github.changmin6362.multistore.feature.user.web.request.UpdateUserRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigInteger;
 import java.util.List;
 
 @RestController
@@ -39,7 +40,7 @@ public class UserController {
      * 특정 사용자 조회 -> DTO + ApiResponse
      */
     @GetMapping("/{userId}")
-    public ResponseEntity<ApiResponse> getUserById(@PathVariable Long userId) {
+    public ResponseEntity<ApiResponse> getUserById(@PathVariable BigInteger userId) {
         UserResponse user = userService.findById(userId);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -55,7 +56,7 @@ public class UserController {
      */
     @PutMapping("/{userId}")
     public ResponseEntity<ApiResponse> updateUser(
-            @PathVariable Long userId,
+            @PathVariable BigInteger userId,
             @RequestBody UpdateUserRequest body) {
         String emailAddress = body != null ? body.emailAddress() : null;
         String nickName = body != null ? body.nickName() : null;
@@ -78,7 +79,7 @@ public class UserController {
      * 사용자 삭제 (soft delete) -> DTO + ApiResponse
      */
     @DeleteMapping("/{userId}")
-    public ResponseEntity<ApiResponse> deleteUser(@PathVariable Long userId) {
+    public ResponseEntity<ApiResponse> deleteUser(@PathVariable BigInteger userId) {
         boolean deleted = userService.delete(userId);
         if (!deleted) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

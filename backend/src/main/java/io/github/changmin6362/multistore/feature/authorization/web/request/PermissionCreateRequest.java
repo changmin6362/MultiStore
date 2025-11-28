@@ -9,4 +9,5 @@ public record PermissionCreateRequest(
         String permissionDescription,
         String resourceType,
         String actionType
-) {}
+) {
+}

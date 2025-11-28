@@ -5,11 +5,11 @@ import java.sql.Timestamp;
 /**
  * Role 테이블의 개별 행을 표현하는 Record
  *
- * @param roleId
- * @param roleName
- * @param roleDescription
- * @param createdAt
- * @param updatedAt
+ * @param roleId          int
+ * @param roleName        String
+ * @param roleDescription String
+ * @param createdAt       Timestamp
+ * @param updatedAt       Timestamp
  */
 public record RoleEntity(
         int roleId,

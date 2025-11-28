@@ -21,7 +21,7 @@ public class PermissionService {
         return entities.stream().map(this::toDto).collect(Collectors.toList());
     }
 
-    public PermissionResponse findById(Long permissionId) {
+    public PermissionResponse findById(int permissionId) {
         Object entity = permissionRepository.findById(permissionId);
         return entity == null ? null : toDto(entity);
     }
@@ -32,7 +32,7 @@ public class PermissionService {
     }
 
     public boolean existsByName(String permissionName) {
-        return permissionRepository.existsByName(permissionName);
+        return permissionRepository.existsByName(permissionName) > 0;
     }
 
     public boolean create(String permissionName, String description, String resourceType, String actionType) {
@@ -40,15 +40,11 @@ public class PermissionService {
         return saved > 0;
     }
 
-    public boolean updateName(Long permissionId, String permissionName) {
-        return permissionRepository.update(permissionId, permissionName) > 0;
-    }
-
-    public boolean updateNameAndDetails(Long permissionId, String permissionName, String resourceType, String actionType, String permissionDescription) {
+    public boolean updateNameAndDetails(int permissionId, String permissionName, String resourceType, String actionType, String permissionDescription) {
         return permissionRepository.updateNameAndDetails(permissionId, permissionName, resourceType, actionType, permissionDescription) > 0;
     }
 
-    public boolean delete(Long permissionId) {
+    public boolean delete(int permissionId) {
         return permissionRepository.delete(permissionId) > 0;
     }
 
@@ -62,9 +58,9 @@ public class PermissionService {
             Object resTypeObj = e.getClass().getMethod("resourceType").invoke(e);
             Object actTypeObj = e.getClass().getMethod("actionType").invoke(e);
 
-            Long id = null;
-            if (idObj instanceof Number n) id = n.longValue();
-            else if (idObj != null) id = Long.parseLong(idObj.toString());
+            int id = 0;
+            if (idObj instanceof Number n) id = n.intValue();
+            else if (idObj != null) id = Integer.parseInt(idObj.toString());
 
             return new PermissionResponse(
                     id,

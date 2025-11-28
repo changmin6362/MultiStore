@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigInteger;
 import java.util.List;
 
 /**
@@ -30,53 +31,64 @@ public class UserRoleRepository {
      */
     private static final RowMapper<UserRoleEntity> USER_ROLE_MAPPER = (rs, rowNum) ->
             new UserRoleEntity(
-                    rs.getObject("user_id", java.math.BigInteger.class),
+                    toBigInteger(rs.getObject("user_id")),
                     rs.getInt("role_id")
             );
-    
     private final JdbcTemplate jdbcTemplate;
 
     public UserRoleRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    // 매핑 부여
-    public int assignRoleToUser(Long userId, Long roleId) {
+    /**
+     * BigInteger 변환 유틸리티 메서드
+     */
+    private static BigInteger toBigInteger(Object v) {
+        if (v == null) return null;
+        if (v instanceof BigInteger b) return b;
+        if (v instanceof Number n) return new BigInteger(n.toString());
+        return new BigInteger(v.toString());
+    }
+
+    /**
+     * 특정 사용자에 대한 역할을 할당
+     * @param userId 사용자 ID
+     * @param roleId 역할 ID
+     * @return 영향 받은 행의 수
+     */
+    public int assignRoleToUser(BigInteger userId, int roleId) {
         String sql = "INSERT INTO user_role (user_id, role_id) VALUES (?, ?)";
         return jdbcTemplate.update(sql, userId, roleId);
     }
 
-    // 매핑 회수
-    public int removeRoleFromUser(Long userId, Long roleId) {
+    /**
+     * 특정 사용자에 대한 역할을 해제
+     * @param userId 사용자 ID
+     * @param roleId 역할 ID
+     * @return 영향 받은 행의 수
+     */
+    public int removeRoleFromUser(BigInteger userId, int roleId) {
         String sql = "DELETE FROM user_role WHERE user_id = ? AND role_id = ?";
         return jdbcTemplate.update(sql, userId, roleId);
     }
 
     /**
-     * 특정 사용자에 대한 user_role 매핑 행들을 엔티티로 조회
+     * 특정 사용자에 대한 모든 역할을 조회
+     * @param userId 사용자 ID
+     * @return user_role 매핑 엔티티 리스트
      */
-    public List<UserRoleEntity> findAllByUserId(Long userId) {
-        String sql = "SELECT user_id, role_id FROM user_role WHERE user_id = ?";
-        return jdbcTemplate.query(sql, USER_ROLE_MAPPER, userId);
-    }
-
-    /**
-     * 특정 역할에 대한 user_role 매핑 행들을 엔티티로 조회
-     */
-    public List<UserRoleEntity> findAllByRoleId(Long roleId) {
-        String sql = "SELECT user_id, role_id FROM user_role WHERE role_id = ?";
-        return jdbcTemplate.query(sql, USER_ROLE_MAPPER, roleId);
-    }
-
-    // 사용자별 역할 상세(조인)
-    public List<RoleEntity> findRolesByUserId(Long userId) {
-        // ROLE_MAPPER expects role_id, role_name, role_description
+    public List<RoleEntity> findRolesByUserId(BigInteger userId) {
         String sql = "SELECT r.role_id, r.role_name, r.role_description, r.created_at, r.updated_at FROM user_role ur JOIN role r ON r.role_id = ur.role_id WHERE ur.user_id = ?";
         return jdbcTemplate.query(sql, ROLE_MAPPER, userId);
     }
 
-    // 존재 여부 체크
-    public boolean exists(Long userId, Long roleId) {
+    /**
+     * 특정 사용자에 대한 역할 존재 여부 조회
+     * @param userId 사용자 ID
+     * @param roleId 역할 ID
+     * @return 역할 존재 여부
+     */
+    public boolean exists(BigInteger userId, int roleId) {
         String sql = "SELECT COUNT(1) FROM user_role WHERE user_id = ? AND role_id = ?";
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, userId, roleId);
         return count != null && count > 0;

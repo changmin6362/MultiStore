@@ -21,7 +21,7 @@ public class RoleService {
         return entities.stream().map(this::toDto).collect(Collectors.toList());
     }
 
-    public RoleResponse findById(Long roleId) {
+    public RoleResponse findById(int roleId) {
         Object entity = roleRepository.findById(roleId);
         return entity == null ? null : toDto(entity);
     }
@@ -31,21 +31,19 @@ public class RoleService {
         return entity == null ? null : toDto(entity);
     }
 
-    public boolean existsByName(String roleName) { return roleRepository.existsByName(roleName); }
+    public boolean existsByName(String roleName) {
+        return roleRepository.existsByName(roleName);
+    }
 
     public boolean create(String roleName, String roleDescription) {
         return roleRepository.save(roleName, roleDescription) > 0;
     }
 
-    public boolean updateName(Long roleId, String roleName) {
-        return roleRepository.update(roleId, roleName) > 0;
-    }
-
-    public boolean updateNameAndDescription(Long roleId, String roleName, String roleDescription) {
+    public boolean updateNameAndDescription(int roleId, String roleName, String roleDescription) {
         return roleRepository.updateNameAndDescription(roleId, roleName, roleDescription) > 0;
     }
 
-    public boolean delete(Long roleId) {
+    public boolean delete(int roleId) {
         return roleRepository.delete(roleId) > 0;
     }
 
@@ -56,9 +54,9 @@ public class RoleService {
             Object nameObj = e.getClass().getMethod("roleName").invoke(e);
             Object descObj = e.getClass().getMethod("roleDescription").invoke(e);
 
-            Long id = null;
-            if (idObj instanceof Number n) id = n.longValue();
-            else if (idObj != null) id = Long.parseLong(idObj.toString());
+            int id = 0;
+            if (idObj instanceof Number n) id = n.intValue();
+            else if (idObj != null) id = Integer.parseInt(idObj.toString());
 
             return new RoleResponse(
                     id,

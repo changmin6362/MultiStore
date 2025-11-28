@@ -1,5 +1,7 @@
 package io.github.changmin6362.multistore.feature.common.response;
 
+import java.math.BigInteger;
+
 /**
  * 사용자 정보를 담는 응답 전용 레코드
  *
@@ -9,7 +11,7 @@ package io.github.changmin6362.multistore.feature.common.response;
  * @param createdAt    사용자가 생성된 타임스탬프
  */
 public record UserResponse(
-        Long userId,
+        BigInteger userId,
         String emailAddress,
         String nickName,
         String createdAt

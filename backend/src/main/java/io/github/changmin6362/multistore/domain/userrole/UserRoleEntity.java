@@ -5,8 +5,8 @@ import java.math.BigInteger;
 /**
  * UserRole 테이블의 개별 행을 표현하는 Record
  *
- * @param userId
- * @param roleId
+ * @param userId BigInteger
+ * @param roleId int
  */
 public record UserRoleEntity(
         BigInteger userId,

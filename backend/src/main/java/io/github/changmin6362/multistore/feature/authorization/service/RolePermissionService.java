@@ -4,6 +4,7 @@ import io.github.changmin6362.multistore.domain.rolepermission.RolePermissionRep
 import io.github.changmin6362.multistore.feature.authorization.web.response.PermissionResponse;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,33 +17,33 @@ public class RolePermissionService {
         this.rolePermissionRepository = rolePermissionRepository;
     }
 
-    public List<PermissionResponse> findPermissionsByRoleId(Long roleId) {
+    public List<PermissionResponse> findPermissionsByRoleId(int roleId) {
         List<?> entities = rolePermissionRepository.findPermissionsByRoleId(roleId);
         return entities.stream().map(this::toDto).collect(Collectors.toList());
     }
 
-    public List<PermissionResponse> findPermissionsByUserId(Long userId) {
+    public List<PermissionResponse> findPermissionsByUserId(BigInteger userId) {
         List<?> entities = rolePermissionRepository.findPermissionsByUserId(userId);
         return entities.stream().map(this::toDto).collect(Collectors.toList());
     }
 
-    public boolean exists(Long roleId, Long permissionId) {
+    public boolean exists(int roleId, int permissionId) {
         return rolePermissionRepository.exists(roleId, permissionId);
     }
 
-    public boolean assignPermissionToRole(Long roleId, Long permissionId) {
+    public boolean assignPermissionToRole(int roleId, int permissionId) {
         return rolePermissionRepository.assignPermissionToRole(roleId, permissionId) > 0;
     }
 
-    public boolean removePermissionFromRole(Long roleId, Long permissionId) {
+    public boolean removePermissionFromRole(int roleId, int permissionId) {
         return rolePermissionRepository.removePermissionFromRole(roleId, permissionId) > 0;
     }
 
-    public boolean userHasPermissionByName(Long userId, String permissionName) {
+    public boolean userHasPermissionByName(BigInteger userId, String permissionName) {
         return rolePermissionRepository.userHasPermissionByName(userId, permissionName);
     }
 
-    public boolean userHasPermissionByResourceAction(Long userId, String resourceType, String actionType) {
+    public boolean userHasPermissionByResourceAction(BigInteger userId, String resourceType, String actionType) {
         return rolePermissionRepository.userHasPermissionByResourceAction(userId, resourceType, actionType);
     }
 
@@ -55,9 +56,9 @@ public class RolePermissionService {
             Object resTypeObj = e.getClass().getMethod("resourceType").invoke(e);
             Object actTypeObj = e.getClass().getMethod("actionType").invoke(e);
 
-            Long id = null;
-            if (idObj instanceof Number n) id = n.longValue();
-            else if (idObj != null) id = Long.parseLong(idObj.toString());
+            int id = 0;
+            if (idObj instanceof Number n) id = n.intValue();
+            else if (idObj != null) id = Integer.parseInt(idObj.toString());
 
             return new PermissionResponse(
                     id,

@@ -1,11 +1,11 @@
 package io.github.changmin6362.multistore.feature.authorization.controller;
 
 import io.github.changmin6362.multistore.common.web.ApiResponse;
-import io.github.changmin6362.multistore.feature.authorization.web.response.PermissionResponse;
-import io.github.changmin6362.multistore.feature.authorization.web.request.AssignPermissionRequest;
-import io.github.changmin6362.multistore.feature.authorization.service.RolePermissionService;
 import io.github.changmin6362.multistore.common.web.flags.AssignedResponse;
 import io.github.changmin6362.multistore.common.web.flags.RemovedResponse;
+import io.github.changmin6362.multistore.feature.authorization.service.RolePermissionService;
+import io.github.changmin6362.multistore.feature.authorization.web.request.AssignPermissionRequest;
+import io.github.changmin6362.multistore.feature.authorization.web.response.PermissionResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +29,7 @@ public class RolePermissionController {
      * 응답: { success: true, permissions: [...] }
      */
     @GetMapping
-    public ResponseEntity<ApiResponse> getRolePermissions(@PathVariable Long roleId) {
+    public ResponseEntity<ApiResponse> getRolePermissions(@PathVariable int roleId) {
         List<PermissionResponse> permissions = rolePermissionService.findPermissionsByRoleId(roleId);
         // PermissionsResponse 래퍼 제거: 권한 리스트를 직접 반환
         return ResponseEntity.ok(ApiResponse.ok(permissions));
@@ -42,9 +42,9 @@ public class RolePermissionController {
      * - 이미 매핑 존재 시 409
      */
     @PostMapping
-    public ResponseEntity<ApiResponse> assignPermissionToRole(@PathVariable Long roleId,
+    public ResponseEntity<ApiResponse> assignPermissionToRole(@PathVariable int roleId,
                                                               @RequestBody AssignPermissionRequest body) {
-        Long permissionId = body != null ? body.permissionId() : null;
+        Integer permissionId = body != null ? body.permissionId() : null;
         if (permissionId == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(ApiResponse.error(400, "permissionId는 필수입니다"));
@@ -66,8 +66,8 @@ public class RolePermissionController {
      * 역할로부터 권한 회수 (없으면 404)
      */
     @DeleteMapping("/{permissionId}")
-    public ResponseEntity<ApiResponse> removePermissionFromRole(@PathVariable Long roleId,
-                                                                @PathVariable Long permissionId) {
+    public ResponseEntity<ApiResponse> removePermissionFromRole(@PathVariable int roleId,
+                                                                @PathVariable int permissionId) {
         boolean deleted = rolePermissionService.removePermissionFromRole(roleId, permissionId);
         if (!deleted) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

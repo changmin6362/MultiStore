@@ -4,6 +4,7 @@ import io.github.changmin6362.multistore.feature.authorization.web.response.Role
 import io.github.changmin6362.multistore.domain.userrole.UserRoleRepository;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,20 +17,20 @@ public class UserRoleService {
         this.userRoleRepository = userRoleRepository;
     }
 
-    public List<RoleResponse> findRolesByUserId(Long userId) {
+    public List<RoleResponse> findRolesByUserId(BigInteger userId) {
         List<?> entities = userRoleRepository.findRolesByUserId(userId);
         return entities.stream().map(this::toDto).collect(Collectors.toList());
     }
 
-    public boolean exists(Long userId, Long roleId) {
+    public boolean exists(BigInteger userId, int roleId) {
         return userRoleRepository.exists(userId, roleId);
     }
 
-    public boolean assignRoleToUser(Long userId, Long roleId) {
+    public boolean assignRoleToUser(BigInteger userId, int roleId) {
         return userRoleRepository.assignRoleToUser(userId, roleId) > 0;
     }
 
-    public boolean removeRoleFromUser(Long userId, Long roleId) {
+    public boolean removeRoleFromUser(BigInteger userId, int roleId) {
         return userRoleRepository.removeRoleFromUser(userId, roleId) > 0;
     }
 
@@ -40,9 +41,9 @@ public class UserRoleService {
             Object nameObj = e.getClass().getMethod("roleName").invoke(e);
             Object descObj = e.getClass().getMethod("roleDescription").invoke(e);
 
-            Long id = null;
-            if (idObj instanceof Number n) id = n.longValue();
-            else if (idObj != null) id = Long.parseLong(idObj.toString());
+            int id = 0;
+            if (idObj instanceof Number n) id = n.intValue();
+            else if (idObj != null) id = Integer.parseInt(idObj.toString());
 
             return new RoleResponse(
                     id,

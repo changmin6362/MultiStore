@@ -6,13 +6,13 @@ import java.sql.Timestamp;
 /**
  * User 테이블의 개별 행을 표현하는 Record
  *
- * @param userId
- * @param emailAddress
- * @param passwordHash
- * @param nickName
- * @param createdAt
- * @param updatedAt
- * @param deletedAt
+ * @param userId BigInteger
+ * @param emailAddress String
+ * @param passwordHash String
+ * @param nickName String
+ * @param createdAt Timestamp
+ * @param updatedAt Timestamp
+ * @param deletedAt Timestamp
  */
 public record UserEntity(
         BigInteger userId,
