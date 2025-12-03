@@ -89,4 +89,27 @@ public class AuthController {
                 .header("refresh_token", tokens[1])
                 .body(ApiResponse.ok("토큰이 갱신되었습니다"));
     }
+
+    /**
+     * POST /api/auth/verify
+     * Authorization 헤더로 accessToken 전달
+     * 토큰 검증 결과 반환
+     */
+    @PostMapping("/verify")
+    public ResponseEntity<ApiResponse> verify(@RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authHeader) {
+        if (!StringUtils.hasText(authHeader) || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(ApiResponse.error(400, "토큰이 없습니다"));
+        }
+        
+        String accessToken = authHeader.substring(7);
+        boolean isValid = authService.verifyToken(accessToken);
+        
+        if (!isValid) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error(401, "토큰이 유효하지 않습니다"));
+        }
+        
+        return ResponseEntity.ok(ApiResponse.ok("토큰이 유효합니다"));
+    }
 }

@@ -81,4 +81,14 @@ public class AuthService {
         refreshTokenService.remove(refreshToken);
         return createTokenPair(subject);
     }
+
+    /**
+     * 액세스 토큰 검증
+     *
+     * @param accessToken 액세스 토큰
+     * @return 유효하면 true, 무효하면 false
+     */
+    public boolean verifyToken(String accessToken) {
+        return jwtTokenProvider.validateToken(accessToken);
+    }
 }
