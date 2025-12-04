@@ -13,10 +13,6 @@ export async function GET() {
 
     // headers()에서 cookie 문자열 가져오기
     const cookieString = headersList.get("cookie") || "";
-    console.log(
-      "[/api/auth/extract-user-id] Cookie string:",
-      cookieString ? "found" : "not found"
-    );
 
     // 쿠키 문자열에서 accessToken 추출
     const cookies: Record<string, string> = {};
@@ -28,10 +24,6 @@ export async function GET() {
     });
 
     const accessToken = cookies.access_token;
-    console.log(
-      "[/api/auth/extract-user-id] access_token found:",
-      !!accessToken
-    );
 
     if (!accessToken) {
       return Response.json(
@@ -46,7 +38,6 @@ export async function GET() {
 
     // JWT에서 userId 추출
     const userId = decodeJwtUserId(accessToken);
-    console.log("[/api/auth/extract-user-id] Extracted userId:", userId);
 
     if (!userId) {
       return Response.json(

@@ -5,6 +5,7 @@ const BACKEND_URL =
 
 /**
  * 백엔드 API 요청 처리 유틸
+ * 401 에러 발생 시 토큰 갱신 후 재시도
  * @template T - 성공 응답의 데이터 타입
  * @returns ApiResult<T> - success가 true면 성공, false면 실패
  */
@@ -24,6 +25,67 @@ export async function fetchBackendApi<T>(
     }
 
     const response = await fetch(`${BACKEND_URL}${options.url}`, fetchOptions);
+
+    // 401 에러 시 토큰 갱신 후 재시도
+    if (response.status === 401) {
+      try {
+        const refreshResponse = await fetch("/api/auth/refresh", {
+          method: "POST"
+        });
+
+        if (refreshResponse.ok) {
+          // 토큰 갱신 후 원래 요청 재시도
+          const retryResponse = await fetch(
+            `${BACKEND_URL}${options.url}`,
+            fetchOptions
+          );
+
+          if (!retryResponse.ok) {
+            const errorResponse: ApiErrorResponse = {
+              error:
+                retryResponse.status === 404
+                  ? "요청한 리소스를 찾을 수 없습니다"
+                  : retryResponse.status === 409
+                    ? "이미 존재하거나 충돌하는 요청입니다"
+                    : retryResponse.status === 400
+                      ? "잘못된 요청입니다"
+                      : retryResponse.status === 401
+                        ? "인증 정보가 올바르지 않습니다"
+                        : `요청 실패: ${retryResponse.status}`,
+              status: retryResponse.status
+            };
+
+            try {
+              const errorData = await retryResponse.json();
+              errorResponse.message = errorData.message || errorData.error;
+            } catch {
+              // JSON 파싱 실패 시 무시
+            }
+
+            return {
+              success: false,
+              data: null,
+              error: errorResponse,
+              status: retryResponse.status
+            };
+          }
+
+          const data: T = await retryResponse.json();
+          return {
+            success: true,
+            data,
+            error: null,
+            status: retryResponse.status
+          };
+        } else {
+          console.warn("[fetchBackendApi] 토큰 갱신 실패");
+          // 갱신 실패 시 원래 401 에러 반환
+        }
+      } catch (refreshError) {
+        console.error("[fetchBackendApi] 토큰 갱신 중 오류:", refreshError);
+        // 갱신 중 오류 발생 시 원래 401 에러 반환
+      }
+    }
 
     if (!response.ok) {
       const errorResponse: ApiErrorResponse = {

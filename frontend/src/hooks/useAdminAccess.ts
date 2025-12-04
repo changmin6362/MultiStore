@@ -39,18 +39,13 @@ export const useAdminAccess = (): AdminAccessState => {
   useEffect(() => {
     const checkAdminAccess = async () => {
       try {
-        console.log("[useAdminAccess] Checking admin permission...");
-
         // Next.js API 라우트를 거쳐 백엔드 권한 확인
-        // useLogin과 동일한 방식으로 요청
         const response = await fetch("/api/auth/check-admin-access", {
           method: "GET",
           headers: {
             "Content-Type": "application/json"
           }
         });
-
-        console.log("[useAdminAccess] Response status:", response.status);
 
         if (!response.ok) {
           const errorData = (await response.json()) as PermissionResponse;
@@ -67,15 +62,9 @@ export const useAdminAccess = (): AdminAccessState => {
         }
 
         const data = (await response.json()) as PermissionResponse;
-        console.log("[useAdminAccess] Permission response:", data);
 
         // 응답 형식: { success: true, data: { allowed: true } }
         const hasAccessAdminPage = data.data?.allowed === true;
-
-        console.log(
-          "[useAdminAccess] Has ACCESS_ADMIN_PAGE:",
-          hasAccessAdminPage
-        );
 
         setState({
           isLoading: false,

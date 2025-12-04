@@ -1,8 +1,8 @@
 import { Footer } from "@/components/common/Footer/Footer";
 import { HeaderVariantProvider } from "@/components/common/Header/contexts/HeaderVariantProvider";
 import { Header } from "@/components/common/Header/Header";
-import { cookies } from "next/headers";
 import { UserStates } from "@/components/common/Header/variants/type";
+import { verifyToken } from "@/hooks/useVerifyToken";
 
 import { fontVariables } from "./fonts";
 import "./globals.css";
@@ -15,10 +15,12 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // 서버 컴포넌트에서 쿠키 읽어 사용자 상태 결정
-  const cookieStore = await cookies();
-  const hasToken = cookieStore.get("access_token");
-  const userState = hasToken ? UserStates[0] : UserStates[1]; // "User" | "Guest"
+  // 토큰 검증
+  const isValidToken = await verifyToken();
+  const userState: (typeof UserStates)[number] = isValidToken
+    ? UserStates[0]
+    : UserStates[1]; // "User" | "Guest"
+
   return (
     <html lang="ko" className={fontVariables}>
       <body className="font-sans antialiased">
