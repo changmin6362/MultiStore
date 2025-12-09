@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button/Button";
 import { ImageCard } from "@/components/ui/ImageCard/ImageCard";
 import { Input } from "@/components/ui/Input/Input";
 import profileImg from "@public/default_profile.jpg";
+import { useUserProfile } from "@/hooks/useUserProfile";
 
 interface UserData {
   userId: number;
@@ -21,6 +22,7 @@ export const ProfileCard = () => {
   const [editing, setEditing] = useState(false);
   const [nickInput, setNickInput] = useState("");
   const [saving, setSaving] = useState(false);
+  const { loading: profileLoading, exists: profileExists } = useUserProfile();
 
   const fetchUser = async () => {
     try {
@@ -138,7 +140,11 @@ export const ProfileCard = () => {
         </div>
       </div>
       <Button
-        label="프로필 정보 수정하기"
+        label={
+          !profileLoading && !profileExists
+            ? "프로필 정보 등록하기"
+            : "프로필 정보 수정하기"
+        }
         state="Navigation"
         buttonType="Secondary"
         href="/user/profile/edit"

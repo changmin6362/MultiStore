@@ -29,7 +29,13 @@ public class UserProfileController {
      */
     @GetMapping
     public ResponseEntity<ApiResponse> getUserProfile(@RequestParam BigInteger userId) {
-        return ResponseEntity.ok(ApiResponse.ok(service.get(userId)));
+        var profile = service.get(userId);
+        if (profile == null) {
+            // 프로필이 존재하지 않을 때는 404 반환
+            return ResponseEntity.status(org.springframework.http.HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.error(404, "프로필이 없습니다"));
+        }
+        return ResponseEntity.ok(ApiResponse.ok(profile));
     }
 
     /**
@@ -55,7 +61,13 @@ public class UserProfileController {
             @RequestParam BigInteger userId,
             @RequestBody UserProfileRequest request
     ) {
-        return ResponseEntity.ok(ApiResponse.ok(service.update(userId, request)));
+        boolean updated = service.update(userId, request);
+        if (!updated) {
+            // 대상 프로필이 존재하지 않는 경우 404 반환
+            return ResponseEntity.status(org.springframework.http.HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.error(404, "수정할 프로필이 없습니다"));
+        }
+        return ResponseEntity.ok(ApiResponse.ok(true));
     }
 
     /**
@@ -65,6 +77,11 @@ public class UserProfileController {
      */
     @DeleteMapping
     public ResponseEntity<ApiResponse> deleteUserProfile(@RequestParam BigInteger userId) {
-        return ResponseEntity.ok(ApiResponse.ok(service.delete(userId)));
+        boolean deleted = service.delete(userId);
+        if (!deleted) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.error(404, "삭제할 프로필이 없습니다"));
+        }
+        return ResponseEntity.ok(ApiResponse.ok(true));
     }
 }

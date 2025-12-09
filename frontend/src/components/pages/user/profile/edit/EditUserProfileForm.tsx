@@ -7,15 +7,18 @@ import { EditUserProfileImage } from "./EditUserProfileImage";
 import { useEditUserProfile } from "./hooks/useEditUserProfile";
 import {
   submitUserProfile,
-  deleteUserProfile
+  createUserProfile
 } from "./services/userProfileService";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useMemo } from "react";
 
 export const EditUserProfileForm = () => {
-  const { profile, loading, exists, isEmpty } = useUserProfile();
+  const { profile, loading, exists } = useUserProfile();
 
-  const isRegister = (!loading && !exists) || (!loading && isEmpty);
+  // 화면 표시 용도: 프로필 미존재(!exists)일 때만 "등록"으로 표기
+  const isCreateView = !loading && !exists;
+  // 전송 방식 결정: "등록" 화면에서는 항상 POST 사용
+  const isCreate = isCreateView;
 
   // 백엔드 응답을 폼 데이터 형태로 맵핑
   // useMemo로 메모이즈하여 매 렌더마다 참조가 바뀌지 않도록 함
@@ -51,7 +54,12 @@ export const EditUserProfileForm = () => {
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
-      await submitUserProfile(userData);
+      // 생성 흐름(등록 화면)에서는 항상 POST 사용
+      if (isCreate) {
+        await createUserProfile(userData);
+      } else {
+        await submitUserProfile(userData);
+      }
       window.location.href = "/user/profile";
     } catch (error) {
       console.error("에러:", error);
@@ -60,28 +68,10 @@ export const EditUserProfileForm = () => {
     }
   };
 
-  const handleDelete = async () => {
-    if (loading) return;
-    const confirmed = window.confirm(
-      "프로필을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다."
-    );
-    if (!confirmed) return;
-    setIsLoading(true);
-    try {
-      await deleteUserProfile();
-      window.location.href = "/user/profile";
-    } catch (error) {
-      console.error("프로필 삭제 에러:", error);
-      alert("프로필 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
     <>
       <div className="mb-4 text-2xl font-bold">
-        {isRegister ? "프로필 정보 등록" : "프로필 정보 수정"}
+        {isCreateView ? "프로필 정보 등록" : "프로필 정보 수정"}
       </div>
       {loading ? null : (
         <EditUserProfileImage userData={userData} onChange={setUserData} />
@@ -98,17 +88,10 @@ export const EditUserProfileForm = () => {
         <div className="mt-2 flex w-full items-center justify-between gap-3">
           <div className="ml-auto flex gap-3">
             <Button
-              label={isRegister ? "프로필 등록하기" : "프로필 수정하기"}
+              label={isCreateView ? "프로필 등록하기" : "프로필 수정하기"}
               state="Submit"
               buttonType="Primary"
               onClick={handleSubmit}
-              disabled={isLoading || loading}
-            />
-            <Button
-              label="프로필 삭제하기"
-              state="Negative"
-              buttonType="Primary"
-              onClick={handleDelete}
               disabled={isLoading || loading}
             />
           </div>
