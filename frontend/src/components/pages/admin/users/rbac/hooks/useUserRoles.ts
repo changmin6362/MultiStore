@@ -1,14 +1,39 @@
 import { useState, useEffect, useCallback } from "react";
 import type { RoleDto } from "@/app/api/.common/types";
+import { extractUserIdAction } from "@/lib/auth/actions";
 
-export const useUserRoles = (userId: number) => {
+export const useUserRoles = () => {
+  const [userId, setUserId] = useState<string | null>(null);
   const [roles, setRoles] = useState<RoleDto[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // 사용자의 현재 역할 조회
+  // userId 추출
+  const initializeUserId = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const { userId: id, error: idError } = await extractUserIdAction();
+
+      if (!id || idError) {
+        setError(idError || "사용자 ID를 찾을 수 없습니다");
+        setUserId(null);
+        return;
+      }
+
+      setUserId(id);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "오류가 발생했습니다");
+      setUserId(null);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   // 사용자의 현재 역할 조회
   const fetchUserRoles = useCallback(async () => {
+    if (!userId) return;
+
     try {
       setLoading(true);
       setError(null);
@@ -22,7 +47,7 @@ export const useUserRoles = (userId: number) => {
       // 백엔드/프록시 응답 정규화: 배열을 직접 반환하도록 변경됨
       const rolesArray = Array.isArray(data)
         ? data
-        : (data?.data as any[]) || data?.roles || [];
+        : (data?.data as RoleDto[]) || data?.roles || [];
       setRoles(rolesArray);
     } catch (err) {
       setError(err instanceof Error ? err.message : "오류가 발생했습니다");
@@ -32,6 +57,8 @@ export const useUserRoles = (userId: number) => {
   }, [userId]);
   // 역할 할당
   const assignRole = async (roleId: number) => {
+    if (!userId) return;
+
     try {
       const response = await fetch(`/api/rbac/users/${userId}/roles`, {
         method: "POST",
@@ -54,6 +81,8 @@ export const useUserRoles = (userId: number) => {
 
   // 역할 회수
   const removeRole = async (roleId: number) => {
+    if (!userId) return;
+
     try {
       const response = await fetch(
         `/api/rbac/users/${userId}/roles/${roleId}`,
@@ -76,10 +105,15 @@ export const useUserRoles = (userId: number) => {
   };
 
   useEffect(() => {
+    initializeUserId();
+  }, [initializeUserId]);
+
+  useEffect(() => {
     fetchUserRoles();
   }, [fetchUserRoles]);
 
   return {
+    userId,
     roles,
     loading,
     error,

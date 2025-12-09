@@ -10,7 +10,7 @@ interface UserRowProps {
 
 export const UserRow = ({ user }: UserRowProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { roles, loading, assignRole, removeRole } = useUserRoles(user.userId);
+  const { roles, loading, assignRole, removeRole } = useUserRoles();
 
   return (
     <>

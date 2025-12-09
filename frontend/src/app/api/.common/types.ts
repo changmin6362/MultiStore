@@ -211,3 +211,17 @@ export interface RoleResponse {
 export interface AllowedResponse {
   allowed: boolean;
 }
+
+/**
+ * 사용자 프로필 응답 타입
+ * 백엔드 UserProfile 엔티티와 대응
+ */
+export interface UserProfileResponse {
+  userId: number;
+  firstName: string | null;
+  lastName: string | null;
+  phone: string | null;
+  birthDate: string | null; // ISO LocalDate string (YYYY-MM-DD)
+  gender: "M" | "W" | null;
+  profileImageUrl: string | null;
+}

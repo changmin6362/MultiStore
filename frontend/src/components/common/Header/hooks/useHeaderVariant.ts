@@ -14,7 +14,13 @@ export const useHeaderVariant = (): HeaderVariantType => {
   const productDetailRegex = /^\/store\/\d+\/product\/\d+/;
 
   // (1) 가장 구체적인 경로 (우선순위 높음)
-  if (pathname.startsWith("/cart") || productDetailRegex.test(pathname)) {
+  if (
+    pathname.startsWith("/cart") ||
+    productDetailRegex.test(pathname) ||
+    pathname.startsWith("/user/profile/edit") ||
+    pathname.startsWith("/user/addresses") ||
+    pathname.startsWith("/user/payments")
+  ) {
     headerVariant = HeaderVariants[0];
   }
   // (2) 검색바가 필요한 경로

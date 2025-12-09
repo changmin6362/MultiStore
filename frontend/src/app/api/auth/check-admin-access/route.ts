@@ -1,81 +1,29 @@
-import { headers } from "next/headers";
-import { decodeJwtUserId } from "@/utils/jwt";
+import { extractUserIdFromJwt } from "@/lib/auth/extractUserIdFromJwt";
 
 /**
  * Admin 페이지 접근 권한 확인 API 라우트
  *
  * 프로세스:
- * 1. HttpOnly 쿠키에서 accessToken 추출
- * 2. JWT 디코딩하여 userId 추출
- * 3. 백엔드 UserRoleController API 호출
- * 4. ACCESS_ADMIN_PAGE 권한 확인 결과 반환
+ * 1. extractUserIdFromJwt로 userId 추출
+ * 2. 백엔드 UserRoleController API 호출
+ * 3. ACCESS_ADMIN_PAGE 권한 확인 결과 반환
  */
 export async function GET() {
-  const debugInfo: Record<string, string | number | boolean | string[] | null> =
-    {};
-
   try {
-    const headersList = await headers();
+    // Step 1: userId 추출
+    const { userId, error } = await extractUserIdFromJwt();
 
-    // Step 1: HttpOnly 쿠키에서 accessToken 추출
-    const cookieString = headersList.get("cookie") || "";
-    debugInfo.cookieStringFound = !!cookieString;
-    debugInfo.cookieStringLength = cookieString.length;
-
-    const cookies: Record<string, string> = {};
-    cookieString.split(";").forEach((cookie) => {
-      const [key, value] = cookie.trim().split("=");
-      if (key && value) {
-        cookies[key] = value;
-      }
-    });
-
-    debugInfo.cookieKeys = Object.keys(cookies);
-    debugInfo.hasAccessToken = "access_token" in cookies;
-
-    let accessToken = cookies.access_token;
-
-    // 쿠키 값이 URL 인코딩되었을 수 있으므로 디코딩
-    if (accessToken) {
-      try {
-        accessToken = decodeURIComponent(accessToken);
-        debugInfo.tokenDecodedSuccessfully = true;
-      } catch (e) {
-        debugInfo.tokenDecodedSuccessfully = false;
-        debugInfo.decodingError = String(e);
-      }
-    }
-
-    debugInfo.accessTokenExists = !!accessToken;
-
-    if (!accessToken) {
+    if (!userId || error) {
       return Response.json(
         {
           success: false,
-          error: "로그인 정보를 찾을 수 없습니다",
-          debug: debugInfo
+          error: error || "로그인 정보를 찾을 수 없습니다"
         },
         { status: 401 }
       );
     }
 
-    // Step 2: JWT에서 userId 추출
-    const userId = decodeJwtUserId(accessToken);
-    debugInfo.userIdExtracted = !!userId;
-    debugInfo.userId = userId;
-
-    if (!userId) {
-      return Response.json(
-        {
-          success: false,
-          error: "토큰에서 사용자 ID를 추출할 수 없습니다",
-          debug: debugInfo
-        },
-        { status: 401 }
-      );
-    }
-
-    // Step 3: 백엔드 UserRoleController API 호출
+    // Step 2: 백엔드 UserRoleController API 호출
     const backendUrl =
       process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080";
     const permissionCheckUrl = `${backendUrl}/api/rbac/users/${userId}/permissions/check?permissionName=ACCESS_ADMIN_PAGE`;
@@ -83,8 +31,7 @@ export async function GET() {
     const backendResponse = await fetch(permissionCheckUrl, {
       method: "GET",
       headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`
+        "Content-Type": "application/json"
       }
     });
 
@@ -100,7 +47,7 @@ export async function GET() {
       );
     }
 
-    // Step 4: 백엔드 응답 파싱
+    // Step 3: 백엔드 응답 파싱
     const backendData = await backendResponse.json();
 
     // 응답 형식: { success: true, allowed: true }
@@ -112,8 +59,7 @@ export async function GET() {
         success: true,
         data: {
           allowed
-        },
-        debug: debugInfo
+        }
       },
       { status: 200 }
     );

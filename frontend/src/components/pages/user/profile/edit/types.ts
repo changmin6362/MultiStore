@@ -1,10 +1,8 @@
 export interface UserProfileData {
-  nickname: string;
-  password: string;
-  lastName: string;
   firstName: string;
+  lastName: string;
   phone: string;
-  birthDate: string;
+  birthDate: string; // YYMMDD (preferred in form), also accepts YYYYMMDD/ISO by normalizer; empty string if unset
   gender: "M" | "W";
-  profileUrl: string | File;
+  profileImageUrl: string | File;
 }

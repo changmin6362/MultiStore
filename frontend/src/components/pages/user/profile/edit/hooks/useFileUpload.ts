@@ -7,13 +7,13 @@ export const useFileUpload = (
   onChange: (data: UserProfileData) => void
 ) => {
   const [previewUrl, setPreviewUrl] = useState<string>(
-    typeof userData.profileUrl === "string" ? userData.profileUrl : ""
+    typeof userData.profileImageUrl === "string" ? userData.profileImageUrl : ""
   );
 
   const handleFileChange = (file: File) => {
     onChange({
       ...userData,
-      profileUrl: file
+      profileImageUrl: file
     });
 
     const reader = new FileReader();
