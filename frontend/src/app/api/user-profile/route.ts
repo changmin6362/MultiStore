@@ -28,6 +28,17 @@ export async function GET() {
       );
     }
 
+    // 백엔드 ApiResponse가 data=null일 때 @JsonUnwrapped로 인해 {}가 올 수 있으므로
+    // 프로필 미존재로 간주하고 404를 반환하여 프론트가 POST 흐름을 타도록 한다.
+    const data = result.data as unknown;
+    const isEmptyObject =
+      data &&
+      typeof data === "object" &&
+      Object.keys(data as object).length === 0;
+    if (data == null || isEmptyObject) {
+      return NextResponse.json({ error: "프로필이 없습니다" }, { status: 404 });
+    }
+
     return NextResponse.json(result.data);
   } catch (error) {
     console.error("[GET /api/user-profile] Error:", error);
