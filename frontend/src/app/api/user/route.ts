@@ -1,56 +1,96 @@
-import type { UserListResponse, UserResponse } from "@/app/api/.common/types";
-import { fetchBackendApi, handleApiError } from "@/app/api/.common/utils";
+import { NextResponse } from "next/server";
+import { extractUserIdFromJwt } from "@/lib/auth/extractUserIdFromJwt";
+import { fetchBackendApi } from "../.common/utils";
 
-/**
- * GET /api/user
- * 모든 사용자 목록 조회
- * @returns {UserListResponse} 사용자 목록 데이터
- */
+// GET /api/user - 현재 로그인한 사용자 정보 조회
 export async function GET() {
-  const result = await fetchBackendApi<UserListResponse>({
-    method: "GET",
-    url: "/api/user"
-  });
-
-  // success 필드로 타입 좁히기
-  if (!result.success) {
-    return handleApiError(result.error, "사용자 목록 조회 실패");
-  }
-
-  // 여기서 result.data는 UserListResponse 타입으로 정확히 인식됨
-  return Response.json(result.data);
-}
-
-/**
- * POST /api/user
- * 새 사용자 생성
- * @param {Request} request - 사용자 정보를 포함한 요청
- * @returns {UserResponse} 생성된 사용자 데이터
- */
-export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    const { userId, error } = await extractUserIdFromJwt();
+    if (!userId || error) {
+      return NextResponse.json(
+        { error: error || "사용자 ID를 찾을 수 없습니다" },
+        { status: 401 }
+      );
+    }
 
-    const result = await fetchBackendApi<UserResponse>({
-      method: "POST",
-      url: "/api/user",
-      body
+    const result = await fetchBackendApi({
+      method: "GET",
+      url: `/api/user/${userId}`
     });
 
     if (!result.success) {
-      return handleApiError(result.error, "사용자 생성 실패");
+      return NextResponse.json({ error: result.error }, { status: result.status });
     }
 
-    // 여기서 result.data는 UserResponse 타입으로 정확히 인식됨
-    return Response.json(result.data, { status: 201 });
-  } catch (error) {
-    return handleApiError(
-      {
-        error: "요청 데이터 파싱 실패",
-        status: 400,
-        message: error instanceof Error ? error.message : "Unknown error"
-      },
-      "사용자 생성 실패"
+    return NextResponse.json(result.data);
+  } catch (e) {
+    console.error("[GET /api/user] Error:", e);
+    return NextResponse.json(
+      { error: "사용자 조회 중 오류가 발생했습니다" },
+      { status: 500 }
+    );
+  }
+}
+
+// PUT /api/user - 현재 로그인한 사용자 닉네임 수정
+export async function PUT(request: Request) {
+  try {
+    const { userId, error } = await extractUserIdFromJwt();
+    if (!userId || error) {
+      return NextResponse.json(
+        { error: error || "사용자 ID를 찾을 수 없습니다" },
+        { status: 401 }
+      );
+    }
+
+    const body = await request.json();
+    const nickName = (body?.nickName as string | undefined)?.trim();
+    if (!nickName) {
+      return NextResponse.json(
+        { error: "nickName은 필수입니다" },
+        { status: 400 }
+      );
+    }
+
+    // 백엔드 PUT은 emailAddress와 nickName을 모두 요구하므로 먼저 현재 사용자 정보를 조회해서 emailAddress를 가져온다
+    const current = await fetchBackendApi({
+      method: "GET",
+      url: `/api/user/${userId}`
+    });
+    if (!current.success) {
+      return NextResponse.json(
+        { error: current.error },
+        { status: current.status }
+      );
+    }
+
+    const emailAddress = current.data?.emailAddress as string | undefined;
+    if (!emailAddress) {
+      return NextResponse.json(
+        { error: "현재 사용자 이메일을 확인할 수 없습니다" },
+        { status: 500 }
+      );
+    }
+
+    const updateResult = await fetchBackendApi({
+      method: "PUT",
+      url: `/api/user/${userId}`,
+      body: { emailAddress, nickName }
+    });
+
+    if (!updateResult.success) {
+      return NextResponse.json(
+        { error: updateResult.error },
+        { status: updateResult.status }
+      );
+    }
+
+    return NextResponse.json(updateResult.data);
+  } catch (e) {
+    console.error("[PUT /api/user] Error:", e);
+    return NextResponse.json(
+      { error: "사용자 수정 중 오류가 발생했습니다" },
+      { status: 500 }
     );
   }
 }
