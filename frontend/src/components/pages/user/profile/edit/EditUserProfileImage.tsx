@@ -5,6 +5,8 @@ import { ImageCard } from "@/components/ui/ImageCard/ImageCard";
 import type { UserProfileData } from "./types";
 import { useFileUpload } from "./hooks/useFileUpload";
 
+import profileImg from "@public/default_profile.jpg";
+
 interface EditUserProfileImageProps {
   userData: UserProfileData;
   onChange: (data: UserProfileData) => void;
@@ -32,7 +34,7 @@ export const EditUserProfileImage = ({
     <div className="flex w-full items-center gap-4 px-1.5 py-2">
       <div className="w-24 cursor-pointer" onClick={handleClick}>
         <ImageCard
-          imageSrc={previewUrl}
+          imageSrc={previewUrl == "" ? profileImg : previewUrl}
           alt="profile"
           className="w-full"
           useLabel={false}

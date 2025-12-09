@@ -23,7 +23,7 @@ public class UserProfileMapper {
                 entity.first_name(),
                 entity.last_name(),
                 entity.phone(),
-                entity.birthDate().toLocalDate(),
+                entity.birthDate() == null ? null : entity.birthDate().toLocalDate(),
                 entity.gender(),
                 entity.profile_image_url()
         );
@@ -38,7 +38,7 @@ public class UserProfileMapper {
                 request.firstName(),
                 request.lastName(),
                 request.phone(),
-                Date.valueOf(request.birthDate()),
+                request.birthDate() == null ? null : Date.valueOf(request.birthDate()),
                 request.gender(),
                 request.profileImageUrl()
         );

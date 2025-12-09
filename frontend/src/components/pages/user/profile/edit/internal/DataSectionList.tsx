@@ -14,9 +14,14 @@ export const DataSectionList = ({ data, onChange }: DataSectionListProps) => {
   const labelWidth = calculateLabelWidth(displayData);
 
   const handleInputChange = (key: keyof UserProfileData, value: string) => {
+    let next = value;
+    // 생년월일은 6자리 숫자(YYMMDD)로만 입력 허용
+    if (key === "birthDate") {
+      next = value.replace(/\D/g, "").slice(0, 6);
+    }
     onChange({
       ...data,
-      [key]: value
+      [key]: next
     });
   };
 

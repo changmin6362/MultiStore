@@ -56,7 +56,8 @@ public class UserProfileRepository {
                 WHERE user_id = ?
                 """;
 
-        return jdbcTemplate.queryForObject(sql, USER_PROFILE_ENTITY_MAPPER, userId);
+        var list = jdbcTemplate.query(sql, USER_PROFILE_ENTITY_MAPPER, userId);
+        return list.isEmpty() ? null : list.get(0);
     }
 
     /**
