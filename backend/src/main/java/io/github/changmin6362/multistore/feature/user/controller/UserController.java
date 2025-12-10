@@ -7,7 +7,6 @@ import io.github.changmin6362.multistore.feature.user.service.UserService;
 import io.github.changmin6362.multistore.feature.user.web.request.UpdateUserRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigInteger;
@@ -60,10 +59,6 @@ public class UserController {
             @RequestBody UpdateUserRequest body) {
         String emailAddress = body != null ? body.emailAddress() : null;
         String nickName = body != null ? body.nickName() : null;
-        if (!StringUtils.hasText(emailAddress) || !StringUtils.hasText(nickName)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(ApiResponse.error(400, "emailAddress와 nickName은 필수입니다"));
-        }
         boolean updated = userService.update(userId, emailAddress, nickName);
         if (!updated) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

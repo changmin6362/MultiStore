@@ -1,4 +1,5 @@
 import { extractUserIdFromJwt } from "@/lib/auth/extractUserIdFromJwt";
+import { fetchBackendApi } from "@/app/api/.common/utils";
 
 /**
  * Admin 페이지 접근 권한 확인 API 라우트
@@ -23,36 +24,32 @@ export async function GET() {
       );
     }
 
-    // Step 2: 백엔드 UserRoleController API 호출
-    const backendUrl =
-      process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080";
-    const permissionCheckUrl = `${backendUrl}/api/rbac/users/${userId}/permissions/check?permissionName=ACCESS_ADMIN_PAGE`;
+    // Step 2: 백엔드 UserRoleController API 호출 (공용 fetch 유틸 사용)
+    type BackendAllowedNew = { success: boolean; data?: { allowed?: boolean } };
+    type BackendAllowedLegacy = { success: boolean; allowed?: boolean };
+    type BackendAllowed = BackendAllowedNew | BackendAllowedLegacy;
 
-    const backendResponse = await fetch(permissionCheckUrl, {
+    const result = await fetchBackendApi<BackendAllowed>({
       method: "GET",
-      headers: {
-        "Content-Type": "application/json"
-      }
+      url: `/api/rbac/users/${userId}/permissions/check?permissionName=ACCESS_ADMIN_PAGE`
     });
 
-    if (!backendResponse.ok) {
-      const errorData = await backendResponse.json().catch(() => ({}));
-      console.error("[/api/auth/check-admin-access] Backend error:", errorData);
+    if (!result.success) {
       return Response.json(
         {
           success: false,
-          error: "권한 확인에 실패했습니다"
+          error: result.error?.message || result.error?.error || "권한 확인에 실패했습니다"
         },
-        { status: backendResponse.status }
+        { status: result.status }
       );
     }
 
     // Step 3: 백엔드 응답 파싱
-    const backendData = await backendResponse.json();
+    const backendData = result.data;
 
-    // 응답 형식: { success: true, allowed: true }
-    // AllowedResponse는 @JsonUnwrapped로 직접 필드 노출
-    const allowed = backendData.allowed === true;
+    const allowed =
+      ("data" in (backendData || {}) && (backendData as BackendAllowedNew).data?.allowed === true) ||
+      (backendData as BackendAllowedLegacy)?.allowed === true;
 
     return Response.json(
       {

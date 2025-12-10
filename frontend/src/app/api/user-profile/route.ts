@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { extractUserIdFromJwt } from "@/lib/auth/extractUserIdFromJwt";
 import { fetchBackendApi } from "../.common/utils";
+import type { UserProfileResponse } from "@/app/api/.common/types";
 
 /**
  * GET /api/user-profile - 사용자 프로필 조회
@@ -16,7 +17,9 @@ export async function GET() {
       );
     }
 
-    const result = await fetchBackendApi({
+    type BackendApiResponse = { success: boolean; data: UserProfileResponse | null };
+
+    const result = await fetchBackendApi<BackendApiResponse>({
       method: "GET",
       url: `/api/user-profile?userId=${userId}`
     });
@@ -28,18 +31,13 @@ export async function GET() {
       );
     }
 
-    // 백엔드 ApiResponse가 data=null일 때 @JsonUnwrapped로 인해 {}가 올 수 있으므로
-    // 프로필 미존재로 간주하고 404를 반환하여 프론트가 POST 흐름을 타도록 한다.
-    const data = result.data as unknown;
-    const isEmptyObject =
-      data &&
-      typeof data === "object" &&
-      Object.keys(data as object).length === 0;
-    if (data == null || isEmptyObject) {
+    // 래퍼 언랩: 순수 프로필 반환. 없으면 404
+    const profile = result.data?.data ?? null;
+    if (profile == null) {
       return NextResponse.json({ error: "프로필이 없습니다" }, { status: 404 });
     }
 
-    return NextResponse.json(result.data);
+    return NextResponse.json(profile);
   } catch (error) {
     console.error("[GET /api/user-profile] Error:", error);
     return NextResponse.json(
@@ -65,7 +63,8 @@ export async function POST(request: Request) {
 
     const body = await request.json();
 
-    const result = await fetchBackendApi({
+    type BackendApiResponse = { success: boolean; data: UserProfileResponse };
+    const result = await fetchBackendApi<BackendApiResponse>({
       method: "POST",
       url: `/api/user-profile?userId=${userId}`,
       body
@@ -78,7 +77,8 @@ export async function POST(request: Request) {
       );
     }
 
-    return NextResponse.json(result.data);
+    // 언랩하여 순수 프로필 반환
+    return NextResponse.json(result.data?.data);
   } catch (error) {
     console.error("[POST /api/user-profile] Error:", error);
     return NextResponse.json(
@@ -104,7 +104,8 @@ export async function PUT(request: Request) {
 
     const body = await request.json();
 
-    const result = await fetchBackendApi({
+    type BackendApiResponse = { success: boolean; data: UserProfileResponse };
+    const result = await fetchBackendApi<BackendApiResponse>({
       method: "PUT",
       url: `/api/user-profile?userId=${userId}`,
       body
@@ -117,7 +118,8 @@ export async function PUT(request: Request) {
       );
     }
 
-    return NextResponse.json(result.data);
+    // 언랩하여 순수 프로필 반환
+    return NextResponse.json(result.data?.data);
   } catch (error) {
     console.error("[PUT /api/user-profile] Error:", error);
     return NextResponse.json(

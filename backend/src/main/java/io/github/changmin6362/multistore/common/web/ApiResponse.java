@@ -1,7 +1,6 @@
 package io.github.changmin6362.multistore.common.web;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,7 +15,6 @@ public class ApiResponse {
     private boolean success;
     private Integer status;
     private String message;
-    @JsonUnwrapped
     private Object data;
 
     public ApiResponse(boolean success, Integer status, String message, Object data) {

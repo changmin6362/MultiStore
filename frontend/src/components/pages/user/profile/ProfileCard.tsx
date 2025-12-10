@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/Input/Input";
 import profileImg from "@public/default_profile.jpg";
 import { useUserProfile } from "@/hooks/useUserProfile";
 
-interface UserData {
+interface CurrentUser {
   userId: number;
   emailAddress: string;
   nickName: string;
@@ -16,39 +16,28 @@ interface UserData {
 }
 
 export const ProfileCard = () => {
-  const [user, setUser] = useState<UserData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
   const [nickInput, setNickInput] = useState("");
-  const [saving, setSaving] = useState(false);
-  const { loading: profileLoading, exists: profileExists } = useUserProfile();
+  const {
+    profile,
+    loading: profileLoading,
+    exists: profileExists,
+    currentUser: user,
+    userLoading: loading,
+    userError: error,
+    fetchCurrentUser,
+    savingUser: saving,
+    editNickName
+  } = useUserProfile();
 
-  const fetchUser = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const res = await fetch("/api/user", { method: "GET" });
-      if (!res.ok) {
-        throw new Error(`사용자 조회 실패 (${res.status})`);
-      }
-      const data = (await res.json()) as UserData;
-      setUser(data);
-      setNickInput(data?.nickName ?? "");
-    } catch (e) {
-      console.error("[ProfileCard] fetchUser error", e);
-      setError(
-        e instanceof Error ? e.message : "사용자 정보를 불러오지 못했습니다"
-      );
-      setUser(null);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // 프로필 정보가 준비되면 해당 userId로 사용자 정보를 조회 (훅의 fetch 함수 사용)
   useEffect(() => {
-    fetchUser();
-  }, []);
+    if (profile?.userId) {
+      void fetchCurrentUser(profile.userId);
+    }
+  }, [profile?.userId, fetchCurrentUser]);
+
+  // nickInput 값은 편집 시작/취소 시점에만 동기화합니다.
 
   const startEdit = () => {
     setNickInput(user?.nickName ?? "");
@@ -60,29 +49,19 @@ export const ProfileCard = () => {
     setEditing(false);
   };
 
-  const saveNickName = async () => {
-    if (!nickInput || nickInput.trim().length === 0) {
-      alert("닉네임을 입력해주세요");
-      return;
-    }
-    setSaving(true);
+  const onEditNickName = async () => {
     try {
-      const res = await fetch("/api/user", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nickName: nickInput.trim() })
-      });
-      if (!res.ok) {
-        throw new Error(`닉네임 수정 실패 (${res.status})`);
+      if (!user) throw new Error("사용자 정보를 불러오는 중입니다");
+      const nextNick = nickInput.trim();
+      if (!nextNick) {
+        alert("닉네임을 입력해주세요");
+        return;
       }
-      const updated = (await res.json()) as UserData;
-      setUser(updated);
-      setEditing(false);
+      const updated = await editNickName(nextNick);
+      if (updated) setEditing(false);
     } catch (e) {
-      console.error("[ProfileCard] saveNickName error", e);
+      console.error("[ProfileCard] editNickName error", e);
       alert("닉네임 수정에 실패했습니다. 잠시 후 다시 시도해주세요.");
-    } finally {
-      setSaving(false);
     }
   };
 
@@ -112,10 +91,10 @@ export const ProfileCard = () => {
                 hasBorder
               />
               <Button
-                label={saving ? "저장 중..." : "저장"}
+                label={saving ? "수정 중..." : "수정"}
                 state="Submit"
                 buttonType="Primary"
-                onClick={saveNickName}
+                onClick={onEditNickName}
                 disabled={saving}
               />
               <Button
