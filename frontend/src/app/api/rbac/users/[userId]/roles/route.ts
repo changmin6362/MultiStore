@@ -1,6 +1,7 @@
 // 백엔드 ApiResponse { success, data, ... } 스키마를 투명 패스스루하지 않고
 // 프론트 클라이언트가 바로 배열을 받도록 정규화합니다.
 import { fetchBackendApi, handleApiError } from "@/app/api/.common/utils";
+import type { RoleDto } from "@/app/api/.common/types";
 
 /**
  * GET /api/rbac/users/[userId]/roles
@@ -14,7 +15,11 @@ export async function GET(
 ) {
   const { userId } = await params;
 
-  const result = await fetchBackendApi<any>({
+  type RolesApiNew = { success: boolean; data: RoleDto[] };
+  type RolesApiLegacy = { success: boolean; roles: RoleDto[] };
+  type RolesApi = RolesApiNew | RolesApiLegacy;
+
+  const result = await fetchBackendApi<RolesApi>({
     method: "GET",
     url: `/api/rbac/users/${userId}/roles`
   });
@@ -23,8 +28,10 @@ export async function GET(
     return handleApiError(result.error, "역할 조회 실패");
   }
 
-  // 백엔드는 { success, data: RoleDto[] } 형태를 반환하므로 클라이언트에는 배열만 전달
-  const payload = (result as any).data?.data ?? (result as any).data?.roles ?? [];
+  // 새/구 응답 모두 지원: { data: RoleDto[] } 또는 { roles: RoleDto[] }
+  const payload:
+    | RoleDto[]
+    | [] = ("data" in result.data ? result.data.data : (result.data as RolesApiLegacy).roles) ?? [];
   return Response.json(payload);
 }
 

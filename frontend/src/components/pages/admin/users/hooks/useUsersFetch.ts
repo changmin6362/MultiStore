@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import type { UserResponse, UsersApiResponse } from "../types";
+import type { RawUser, UserResponse, UsersApiResponse } from "../types";
 import { convertUser } from "../utils";
 
 export const useUsersFetch = () => {
@@ -22,8 +22,12 @@ export const useUsersFetch = () => {
         // 백엔드 응답 구조 변경 대응
         // 이전: { success: true, users: [...] }
         // 현재: { success: true, data: [...] }
-        const anyData: any = data as any;
-        const userList = (anyData.data as any[]) || anyData.users || [];
+        type UsersApiLegacy = { success: boolean; users: RawUser[] };
+        type UsersApi = UsersApiResponse | UsersApiLegacy;
+        const unified: UsersApi = data as UsersApi;
+        const userList: RawUser[] = (
+          "data" in unified ? unified.data : (unified as UsersApiLegacy).users
+        ) || [];
         const convertedUsers = userList.map(convertUser);
 
         setUsers(convertedUsers);

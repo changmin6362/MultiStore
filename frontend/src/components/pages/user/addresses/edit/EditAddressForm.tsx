@@ -11,8 +11,8 @@ export const EditAddressForm = () => {
     postalCode: "07554",
     addressDefault: "강서구 공항대로 61길 60",
     addressDetail: "101동 1001호",
-    recepientName: "김창민",
-    recepientPhone: "010-1234-1234"
+    recipientName: "김창민",
+    recipientPhone: "010-1234-1234"
   };
 
   const [userData, setUserData] = useState<AddressAddData>(emptyData);

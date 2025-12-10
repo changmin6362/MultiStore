@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { extractUserIdFromJwt } from "@/lib/auth/extractUserIdFromJwt";
 import { fetchBackendApi } from "../.common/utils";
+import type { UserResponse } from "@/app/api/.common/types";
 
 // GET /api/user - 현재 로그인한 사용자 정보 조회
 export async function GET() {
@@ -13,7 +14,7 @@ export async function GET() {
       );
     }
 
-    const result = await fetchBackendApi({
+    const result = await fetchBackendApi<UserResponse>({
       method: "GET",
       url: `/api/user/${userId}`
     });
@@ -53,7 +54,7 @@ export async function PUT(request: Request) {
     }
 
     // 백엔드 PUT은 emailAddress와 nickName을 모두 요구하므로 먼저 현재 사용자 정보를 조회해서 emailAddress를 가져온다
-    const current = await fetchBackendApi({
+    const current = await fetchBackendApi<UserResponse>({
       method: "GET",
       url: `/api/user/${userId}`
     });
