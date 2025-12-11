@@ -9,8 +9,8 @@ const FIELD_LABELS: Record<keyof AddressAddData, string> = {
   postalCode: "우편번호",
   addressDefault: "기본 주소",
   addressDetail: "상세 주소",
-  recepientName: "수령인 이름",
-  recepientPhone: "수령인 전화번호"
+  recipientName: "수령인 이름",
+  recipientPhone: "수령인 전화번호"
 };
 
 const VALIDATION_RULES = {
@@ -26,11 +26,11 @@ const VALIDATION_RULES = {
     minLength: 2,
     message: "상세 주소는 2글자 이상이어야 합니다"
   },
-  recepientName: {
+  recipientName: {
     minLength: 2,
     message: "수령인 이름은 2글자 이상이어야 합니다"
   },
-  recepientPhone: {
+  recipientPhone: {
     pattern: /^0\d{1,2}-?\d{3,4}-?\d{4}$/,
     message: "수령인 전화번호는 올바른 형식이어야 합니다 (예: 010-1234-5678)"
   }

@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.dao.DataIntegrityViolationException;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -33,14 +34,24 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(ApiResponse.error(400, "요청 데이터가 올바르지 않습니다"));
         }
-        boolean result = authService.signup(body.emailAddress(), body.password(), body.nickName());
-        if (!result) {
+        try {
+            boolean saved = authService.signup(body.emailAddress(), body.password(), body.nickName());
+            if (!saved) {
+                // 저장 결과가 0인 비정상 상황은 서버 오류로 간주
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(ApiResponse.error(500, "회원가입 처리에 실패했습니다"));
+            }
+            // 회원가입 성공 - 토큰을 반환하지 않음
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(ApiResponse.ok("회원가입이 완료되었습니다"));
+        } catch (DataIntegrityViolationException e) {
+            // UNIQUE 제약 등 도메인 제약 위반 → 409로 변환
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(ApiResponse.error(409, "이미 존재하는 회원정보입니다"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error(500, "회원가입 처리 중 오류가 발생했습니다"));
         }
-        // 회원가입 성공 - 토큰을 반환하지 않음
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.ok("회원가입이 완료되었습니다"));
     }
 
     /**

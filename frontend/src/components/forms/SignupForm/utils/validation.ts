@@ -32,8 +32,8 @@ export const validateNickname = (nickname: string): string | undefined => {
     return "닉네임을 입력해주세요";
   }
 
-  if (nickname.length < 2) {
-    return "닉네임은 2자 이상이어야 합니다";
+  if (nickname.length < 3) {
+    return "닉네임은 3자 이상이어야 합니다";
   }
 
   if (nickname.length > 20) {

@@ -10,7 +10,11 @@ interface UserRowProps {
 
 export const UserRow = ({ user }: UserRowProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { roles, loading, assignRole, removeRole } = useUserRoles();
+  // 역할 데이터는 행이 확장될 때만 가져와서 N+1 API 호출을 방지
+  const { roles, loading, assignRole, removeRole } = useUserRoles(
+    user.userId,
+    isExpanded
+  );
 
   return (
     <>

@@ -24,14 +24,14 @@ export const getDisplayData = (data: AddressAddData): DisplayItem[] => [
     value: data.addressDetail
   },
   {
-    key: "recepientName",
+    key: "recipientName",
     label: "수령인 이름:",
-    value: data.recepientName
+    value: data.recipientName
   },
   {
-    key: "recepientPhone",
+    key: "recipientPhone",
     label: "수령인 전화번호:",
-    value: data.recepientPhone
+    value: data.recipientPhone
   }
 ];
 

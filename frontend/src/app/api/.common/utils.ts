@@ -13,14 +13,18 @@ export async function fetchBackendApi<T>(
   options: FetchOptions
 ): Promise<ApiResult<T>> {
   try {
+    const hasBody = options.body !== undefined && options.body !== null;
     const fetchOptions: RequestInit = {
       method: options.method,
       headers: {
-        "Content-Type": "application/json"
+        // Accept JSON for all requests
+        Accept: "application/json",
+        // Only set Content-Type when a body is actually present
+        ...(hasBody ? { "Content-Type": "application/json" } : {})
       }
     };
 
-    if (options.body) {
+    if (hasBody) {
       fetchOptions.body = JSON.stringify(options.body);
     }
 
@@ -35,10 +39,9 @@ export async function fetchBackendApi<T>(
 
         if (refreshResponse.ok) {
           // 토큰 갱신 후 원래 요청 재시도
-          const retryResponse = await fetch(
-            `${BACKEND_URL}${options.url}`,
-            fetchOptions
-          );
+          const retryResponse = await fetch(`${BACKEND_URL}${options.url}`, {
+            ...fetchOptions
+          });
 
           if (!retryResponse.ok) {
             const errorResponse: ApiErrorResponse = {
@@ -103,8 +106,14 @@ export async function fetchBackendApi<T>(
       };
 
       try {
-        const errorData = await response.json();
-        errorResponse.message = errorData.message || errorData.error;
+        const contentType = response.headers.get("content-type") || "";
+        if (contentType.includes("application/json")) {
+          const errorData = await response.json();
+          errorResponse.message = (errorData && (errorData.message || errorData.error)) || undefined;
+        } else {
+          const text = await response.text();
+          errorResponse.message = text?.slice(0, 1000) || undefined;
+        }
       } catch {
         // JSON 파싱 실패 시 무시
       }

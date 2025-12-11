@@ -11,8 +11,8 @@ export const AddAddressForm = () => {
     postalCode: "",
     addressDefault: "",
     addressDetail: "",
-    recepientName: "",
-    recepientPhone: ""
+    recipientName: "",
+    recipientPhone: ""
   };
 
   const [userData, setUserData] = useState<AddressAddData>(emptyData);

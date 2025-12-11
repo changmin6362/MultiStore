@@ -1,38 +1,17 @@
 import { useState, useEffect, useCallback } from "react";
 import type { RoleDto } from "@/app/api/.common/types";
-import { extractUserIdAction } from "@/lib/auth/actions";
 
-export const useUserRoles = () => {
-  const [userId, setUserId] = useState<string | null>(null);
+export const useUserRoles = (
+  userId?: number | string,
+  autoFetch: boolean = false
+) => {
   const [roles, setRoles] = useState<RoleDto[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // userId 추출
-  const initializeUserId = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const { userId: id, error: idError } = await extractUserIdAction();
-
-      if (!id || idError) {
-        setError(idError || "사용자 ID를 찾을 수 없습니다");
-        setUserId(null);
-        return;
-      }
-
-      setUserId(id);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "오류가 발생했습니다");
-      setUserId(null);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
   // 사용자의 현재 역할 조회
   const fetchUserRoles = useCallback(async () => {
-    if (!userId) return;
+    if (!userId && userId !== 0) return;
 
     try {
       setLoading(true);
@@ -57,7 +36,7 @@ export const useUserRoles = () => {
   }, [userId]);
   // 역할 할당
   const assignRole = async (roleId: number) => {
-    if (!userId) return;
+    if (userId === undefined || userId === null) return;
 
     try {
       const response = await fetch(`/api/rbac/users/${userId}/roles`, {
@@ -81,7 +60,7 @@ export const useUserRoles = () => {
 
   // 역할 회수
   const removeRole = async (roleId: number) => {
-    if (!userId) return;
+    if (userId === undefined || userId === null) return;
 
     try {
       const response = await fetch(
@@ -104,16 +83,14 @@ export const useUserRoles = () => {
     }
   };
 
+  // 필요할 때만 자동 조회 (예: 행 확장 시)
   useEffect(() => {
-    initializeUserId();
-  }, [initializeUserId]);
-
-  useEffect(() => {
-    fetchUserRoles();
-  }, [fetchUserRoles]);
+    if (autoFetch) {
+      fetchUserRoles();
+    }
+  }, [autoFetch, fetchUserRoles]);
 
   return {
-    userId,
     roles,
     loading,
     error,
